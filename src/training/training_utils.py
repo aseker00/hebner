@@ -1,13 +1,66 @@
 import errno
 import os
+import subprocess
+
 import pandas as pd
 from seqeval.metrics import precision_score, recall_score, f1_score, accuracy_score
 from sklearn.metrics import classification_report
+from torch import nn
+
 from src.modeling.modeling_xfmr import XfmrNerModel
-from src.processing.processing_utils import LabeledSentence
+from src.processing.processing_utils import TokenLabeledSentence
 
 
-def print_sample(epoch, phase, step, gold_sent: LabeledSentence, pred_sent: LabeledSentence):
+# model = HebNER("xl")
+# output = model.predict("Steve went to Paris")
+# print(output)
+# '''
+#     [
+#         {
+#             "confidence": 0.9981840252876282,
+#             "tag": "B-PER",
+#             "word": "Steve"
+#         },
+#         {
+#             "confidence": 0.9998939037322998,
+#             "tag": "O",
+#             "word": "went"
+#         },
+#         {
+#             "confidence": 0.999891996383667,
+#             "tag": "O",
+#             "word": "to"
+#         },
+#         {
+#             "confidence": 0.9991968274116516,
+#             "tag": "B-LOC",
+#             "word": "Paris"
+#         }
+#     ]
+# '''
+class ModelOptimizer:
+
+    def __init__(self, optimizer, scheduler, parameters, max_grad_norm):
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.parameters = parameters
+        self.max_grad_norm = max_grad_norm
+
+    def step(self):
+        nn.utils.clip_grad_norm_(parameters=self.parameters, max_norm=self.max_grad_norm)
+        self.optimizer.step()
+        self.scheduler.step()
+        self.optimizer.zero_grad()
+
+
+# def print_sample(epoch, phase, step, gold_sent: TokenLabeledSentence, pred_sent: TokenLabeledSentence):
+#     print('epoch: {}, {}: {} Sentence ID     : {}'.format(epoch, phase, step, gold_sent.sent_id))
+#     print('epoch: {}, {}: {} Tokens          : {}'.format(epoch, phase, step, ' '.join(gold_sent.tokens)))
+#     print('epoch: {}, {}: {} Gold labels     : {}'.format(epoch, phase, step, ' '.join(gold_sent.labels)))
+#     print('epoch: {}, {}: {} Predicted labels: {}'.format(epoch, phase, step, ' '.join(pred_sent.labels)))
+
+
+def print_sample(epoch, phase, step, gold_sent, pred_sent):
     print('epoch: {}, {}: {} Sentence ID     : {}'.format(epoch, phase, step, gold_sent.sent_id))
     print('epoch: {}, {}: {} Tokens          : {}'.format(epoch, phase, step, ' '.join(gold_sent.tokens)))
     print('epoch: {}, {}: {} Gold labels     : {}'.format(epoch, phase, step, ' '.join(gold_sent.labels)))
@@ -25,7 +78,8 @@ def print_metrics(epoch, phase, step, gold_sentences: list, pred_sentences: list
     y_pred = pd.Series(pred_labels)
     cross_tab = pd.crosstab(y_true, y_pred, rownames=['Real Label'], colnames=['Prediction'], margins=True)
     report = classification_report(y_true, y_pred, labels=model.labels[1:], target_names=model.labels[1:])
-    print("epoch: {}, {}: {}, precision={}, recall={}, f1={}, acc={}".format(epoch, phase, step, precision_micro, recall_micro, f1_micro, accuracy))
+    print("epoch: {}, {}: {}, precision={}, recall={}, f1={}, acc={}".format(epoch, phase, step, precision_micro,
+                                                                             recall_micro, f1_micro, accuracy))
     print(cross_tab)
     print(report)
 
@@ -40,7 +94,7 @@ def mkdir(folder_path: str):
 
 
 def bash_command(cmd):
-    os.subprocess.Popen(cmd, shell=True, executable='/bin/bash')
+    subprocess.Popen(cmd, shell=True, executable='/bin/bash')
 
 
-muc_eval_cmdline = 'java -Xmx4g -jar corpuscmd-85.2.18.c61.0-stand-alone.jar CharLevelMucEval --referenceData {} --testData {}; mv agreement_output.txt {}-{}_output.txt'
+muc_eval_cmdline = 'java -Xmx4g -jar {}/corpuscmd-85.2.18.c61.0-stand-alone.jar CharLevelMucEval --tags "PER,LOC,ORG" --referenceData {} --testData {}; mv {}/agreement_output.txt {}/{}-{}_output.txt'

@@ -1,0 +1,379 @@
+--- data/clean/treebank/spmrl-05.conllu	2020-01-02 14:45:14.000000000 +0200
++++ data/clean/treebank/spmrl-05.conllu	2020-01-02 14:53:07.000000000 +0200
+@@ -99800,7 +99800,7 @@
+ 
+ # sent_id = 2685
+ # global_sent_id = 2685
+-# text_from_ud = למרות שהאיצטדיון ישן, כר הדשא מצויין והמארגנים מצפים לך-7,000 צופים.
++# text_from_ud = למרות שהאיצטדיון ישן, כר הדשא מצויין והמארגנים מצפים לכ-7,000 צופים.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	למרות	למרות	IN	IN	_	10	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=למרות
+@@ -99820,9 +99820,9 @@
+ 12	ה	ה	DEF	DEF	_	13	def	_	biose=O|ner_escaped=_|token_id=8|token_str=והמארגנים
+ 13	מארגנים	ארגן	BN	BN	gen=M|num=P|per=A|HebBinyan=PIEL	14	subj	_	biose=O|ner_escaped=_|token_id=8|token_str=והמארגנים
+ 14	מצפים	ציפה	BN	BN	gen=M|num=P|per=A|HebBinyan=PIEL	11	conj	_	biose=O|ner_escaped=_|token_id=9|token_str=מצפים
+-15-16	לך	_	_	_	_	_	_	_	_
+-15	ל	ל	PREPOSITION	PREPOSITION	_	14	prepmod	_	biose=O|ner_escaped=_|token_id=10|token_str=לך
+-16	כ	כ	RB	RB	_	19	mod	_	biose=O|ner_escaped=_|token_id=10|token_str=לך
++15-16	לכ	_	_	_	_	_	_	_	_
++15	ל	ל	PREPOSITION	PREPOSITION	_	14	prepmod	_	biose=O|ner_escaped=_|token_id=10|token_str=לכ
++16	כ	כ	RB	RB	_	19	mod	_	biose=O|ner_escaped=_|token_id=10|token_str=לכ
+ 17	-	_	yyDASH	yyDASH	_	19	punct	_	biose=O|ner_escaped=_|token_id=11|token_str=-
+ 18	7,000	_	CD	CD	_	19	num	_	biose=O|ner_escaped=_|token_id=12|token_str=7,000
+ 19	צופים	צופה	NN	NN	gen=M|num=P	15	pobj	_	biose=O|ner_escaped=_|token_id=13|token_str=צופים
+@@ -109251,7 +109251,7 @@
+ 27-29	ב17	_	_	_	_	_	_	_	_
+ 27	ב	ב	PREPOSITION	PREPOSITION	_	35	conj	_	biose=O|ner_escaped=_|token_id=18|token_str=ב17
+ 28	ה	ה	DEF	DEF	_	29	def	_	biose=O|ner_escaped=_|token_id=18|token_str=ב17
+-29	71	_	CD	CD	_	27	pobj	_	biose=O|ner_escaped=_|token_id=18|token_str=ב17
++29	17	_	CD	CD	_	27	pobj	_	biose=O|ner_escaped=_|token_id=18|token_str=ב17
+ 30-31	בנובמבר	_	_	_	_	_	_	_	_
+ 30	ב	ב	PREPOSITION	PREPOSITION	_	29	prepmod	_	biose=O|ner_escaped=_|token_id=19|token_str=בנובמבר
+ 31	נובמבר	נובמבר	NNP	NNP	_	30	pobj	_	biose=O|ner_escaped=_|token_id=19|token_str=בנובמבר
+@@ -128139,7 +128139,7 @@
+ 
+ # sent_id = 3482
+ # global_sent_id = 3482
+-# text_from_ud = יש ביוניוורסל תשובה לכל מה שיש בם-ג-מ, ואף יותר.
++# text_from_ud = יש ביוניוורסל תשובה לכל מה שיש במ-ג-מ, ואף יותר.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	יש	יש	EX	EX	_	0	ROOT	_	biose=O|ner_escaped=_|token_id=1|token_str=יש
+@@ -128154,9 +128154,9 @@
+ 8-9	שיש	_	_	_	_	_	_	_	_
+ 8	ש	ש	REL	REL	_	7	rcmod	_	biose=O|ner_escaped=_|token_id=6|token_str=שיש
+ 9	יש	יש	EX	EX	_	8	relcomp	_	biose=O|ner_escaped=_|token_id=6|token_str=שיש
+-10-11	בם	_	_	_	_	_	_	_	_
+-10	ב	ב	PREPOSITION	PREPOSITION	_	9	prepmod	_	biose=O|ner_escaped=_|token_id=7|token_str=בם
+-11	מ	מ	NNP	NNP	gen=M|num=S	15	goeswith	_	biose=B-FAC|ner_escaped=FAC[58]|token_id=7|token_str=בם
++10-11	במ	_	_	_	_	_	_	_	_
++10	ב	ב	PREPOSITION	PREPOSITION	_	9	prepmod	_	biose=O|ner_escaped=_|token_id=7|token_str=במ
++11	מ	מ	NNP	NNP	gen=M|num=S	15	goeswith	_	biose=B-FAC|ner_escaped=FAC[58]|token_id=7|token_str=במ
+ 12	-	_	yyDASH	yyDASH	_	15	punct	_	biose=I-FAC|ner_escaped=FAC[58]|token_id=8|token_str=-
+ 13	ג	ג	NNP	NNP	gen=M|num=S	15	goeswith	_	biose=I-FAC|ner_escaped=FAC[58]|token_id=9|token_str=ג
+ 14	-	_	yyDASH	yyDASH	_	15	punct	_	biose=I-FAC|ner_escaped=FAC[58]|token_id=10|token_str=-
+@@ -128739,7 +128739,7 @@
+ 
+ # sent_id = 3498
+ # global_sent_id = 3498
+-# text_from_ud = גם ביוניוורסל וגם בם-ג-מ הקהל שותף פעיל בהפקה וחוזה בפעולה על גבי מסך ענק.
++# text_from_ud = גם ביוניוורסל וגם במ-ג-מ הקהל שותף פעיל בהפקה וחוזה בפעולה על גבי מסך ענק.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	גם	גם	RB	RB	_	2	advmod	_	biose=O|ner_escaped=_|token_id=1|token_str=גם
+@@ -128749,9 +128749,9 @@
+ 4-5	וגם	_	_	_	_	_	_	_	_
+ 4	ו	ו	CONJ	CONJ	_	14	prepmod	_	biose=O|ner_escaped=_|token_id=3|token_str=וגם
+ 5	גם	גם	RB	RB	_	6	advmod	_	biose=O|ner_escaped=_|token_id=3|token_str=וגם
+-6-7	בם	_	_	_	_	_	_	_	_
+-6	ב	ב	PREPOSITION	PREPOSITION	_	14	subj	_	biose=O|ner_escaped=_|token_id=4|token_str=בם
+-7	מ	מ	NNP	NNP	gen=M|num=S	11	goeswith	_	biose=B-FAC|ner_escaped=FAC[2]|token_id=4|token_str=בם
++6-7	במ	_	_	_	_	_	_	_	_
++6	ב	ב	PREPOSITION	PREPOSITION	_	14	subj	_	biose=O|ner_escaped=_|token_id=4|token_str=במ
++7	מ	מ	NNP	NNP	gen=M|num=S	11	goeswith	_	biose=B-FAC|ner_escaped=FAC[2]|token_id=4|token_str=במ
+ 8	-	_	yyDASH	yyDASH	_	11	punct	_	biose=I-FAC|ner_escaped=FAC[2]|token_id=5|token_str=-
+ 9	ג	ג	NNP	NNP	gen=M|num=S	11	goeswith	_	biose=I-FAC|ner_escaped=FAC[2]|token_id=6|token_str=ג
+ 10	-	_	yyDASH	yyDASH	_	11	punct	_	biose=I-FAC|ner_escaped=FAC[2]|token_id=7|token_str=-
+@@ -129136,7 +129136,7 @@
+ 
+ # sent_id = 3508
+ # global_sent_id = 3508
+-# text_from_ud = כך או כך, זו תשובה למיצגי הרחוב השחוקים של המתחרים מם-ג-מ.
++# text_from_ud = כך או כך, זו תשובה למיצגי הרחוב השחוקים של המתחרים ממ-ג-מ.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	כך	כך	RB	RB	_	6	advmod	_	biose=O|ner_escaped=_|token_id=1|token_str=כך
+@@ -129158,9 +129158,9 @@
+ 14-15	המתחרים	_	_	_	_	_	_	_	_
+ 14	ה	ה	DEF	DEF	_	15	def	_	biose=O|ner_escaped=_|token_id=11|token_str=המתחרים
+ 15	מתחרים	התחרה	BN	BN	gen=M|num=P|per=A|HebBinyan=HITPAEL	13	gobj	_	biose=O|ner_escaped=_|token_id=11|token_str=המתחרים
+-16-17	מם	_	_	_	_	_	_	_	_
+-16	מ	מ	PREPOSITION	PREPOSITION	_	15	prepmod	_	biose=O|ner_escaped=_|token_id=12|token_str=מם
+-17	מ	מ	NNP	NNP	gen=M|num=S	21	goeswith	_	biose=B-ORG|ner_escaped=ORG[15]|token_id=12|token_str=מם
++16-17	ממ	_	_	_	_	_	_	_	_
++16	מ	מ	PREPOSITION	PREPOSITION	_	15	prepmod	_	biose=O|ner_escaped=_|token_id=12|token_str=ממ
++17	מ	מ	NNP	NNP	gen=M|num=S	21	goeswith	_	biose=B-ORG|ner_escaped=ORG[15]|token_id=12|token_str=ממ
+ 18	-	_	yyDASH	yyDASH	_	21	punct	_	biose=I-ORG|ner_escaped=ORG[15]|token_id=13|token_str=-
+ 19	ג	ג	NNP	NNP	gen=M|num=S	21	goeswith	_	biose=I-ORG|ner_escaped=ORG[15]|token_id=14|token_str=ג
+ 20	-	_	yyDASH	yyDASH	_	21	punct	_	biose=I-ORG|ner_escaped=ORG[15]|token_id=15|token_str=-
+@@ -129225,12 +129225,12 @@
+ 
+ # sent_id = 3511
+ # global_sent_id = 3511
+-# text_from_ud = בם-ג-מ הלכו על הוליווד של מחצית המאה; ביוניוורסל על שנות ה80 וה90.
++# text_from_ud = במ-ג-מ הלכו על הוליווד של מחצית המאה; ביוניוורסל על שנות ה80 וה90.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+-1-2	בם	_	_	_	_	_	_	_	_
+-1	ב	ב	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=בם
+-2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[16]|token_id=1|token_str=בם
++1-2	במ	_	_	_	_	_	_	_	_
++1	ב	ב	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=במ
++2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[16]|token_id=1|token_str=במ
+ 3	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[16]|token_id=2|token_str=-
+ 4	ג	ג	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=I-FAC|ner_escaped=FAC[16]|token_id=3|token_str=ג
+ 5	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[16]|token_id=4|token_str=-
+@@ -129377,12 +129377,12 @@
+ 
+ # sent_id = 3516
+ # global_sent_id = 3516
+-# text_from_ud = לם-ג-מ יש את "פריים טיים קפה", שבו מקבלת את המבקרים "מאם", האם הטיפוסית מסרטי המערבונים.
++# text_from_ud = למ-ג-מ יש את "פריים טיים קפה", שבו מקבלת את המבקרים "מאם", האם הטיפוסית מסרטי המערבונים.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+-1-2	לם	_	_	_	_	_	_	_	_
+-1	ל	ל	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=לם
+-2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[22]|token_id=1|token_str=לם
++1-2	למ	_	_	_	_	_	_	_	_
++1	ל	ל	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=למ
++2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[22]|token_id=1|token_str=למ
+ 3	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[22]|token_id=2|token_str=-
+ 4	ג	ג	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=I-FAC|ner_escaped=FAC[22]|token_id=3|token_str=ג
+ 5	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[22]|token_id=4|token_str=-
+@@ -129661,12 +129661,12 @@
+ 
+ # sent_id = 3526
+ # global_sent_id = 3526
+-# text_from_ud = בם-ג-מ נבלעים אלפים באתרים בתוך שניות, בסדר מופתי ובלא תקלות.
++# text_from_ud = במ-ג-מ נבלעים אלפים באתרים בתוך שניות, בסדר מופתי ובלא תקלות.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+-1-2	בם	_	_	_	_	_	_	_	_
+-1	ב	ב	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=בם
+-2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[25]|token_id=1|token_str=בם
++1-2	במ	_	_	_	_	_	_	_	_
++1	ב	ב	PREPOSITION	PREPOSITION	_	7	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=במ
++2	מ	מ	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=B-FAC|ner_escaped=FAC[25]|token_id=1|token_str=במ
+ 3	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[25]|token_id=2|token_str=-
+ 4	ג	ג	NNP	NNP	gen=M|num=S	6	goeswith	_	biose=I-FAC|ner_escaped=FAC[25]|token_id=3|token_str=ג
+ 5	-	_	yyDASH	yyDASH	_	6	punct	_	biose=I-FAC|ner_escaped=FAC[25]|token_id=4|token_str=-
+@@ -129729,7 +129729,7 @@
+ 
+ # sent_id = 3528
+ # global_sent_id = 3528
+-# text_from_ud = ביוניוורסל דיילים מכוונים את הקהל במסלול הנכון, מפני שהתחומים אינם ברורים כמו בם-ג-מ.
++# text_from_ud = ביוניוורסל דיילים מכוונים את הקהל במסלול הנכון, מפני שהתחומים אינם ברורים כמו במ-ג-מ.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1-2	ביוניוורסל	_	_	_	_	_	_	_	_
+@@ -129757,9 +129757,9 @@
+ 18	אינם	אינו	COP	COP	gen=M|num=P|per=3	19	neg	_	biose=O|ner_escaped=_|token_id=11|token_str=אינם
+ 19	ברורים	ברור	JJ	JJ	gen=M|num=P	15	advcl	_	biose=O|ner_escaped=_|token_id=12|token_str=ברורים
+ 20	כמו	כמו	IN	IN	_	19	prepmod	_	biose=O|ner_escaped=_|token_id=13|token_str=כמו
+-21-22	בם	_	_	_	_	_	_	_	_
+-21	ב	ב	PREPOSITION	PREPOSITION	_	20	pobj	_	biose=O|ner_escaped=_|token_id=14|token_str=בם
+-22	מ	מ	NNP	NNP	gen=M|num=S	26	goeswith	_	biose=B-FAC|ner_escaped=FAC[26]|token_id=14|token_str=בם
++21-22	במ	_	_	_	_	_	_	_	_
++21	ב	ב	PREPOSITION	PREPOSITION	_	20	pobj	_	biose=O|ner_escaped=_|token_id=14|token_str=במ
++22	מ	מ	NNP	NNP	gen=M|num=S	26	goeswith	_	biose=B-FAC|ner_escaped=FAC[26]|token_id=14|token_str=במ
+ 23	-	_	yyDASH	yyDASH	_	26	punct	_	biose=I-FAC|ner_escaped=FAC[26]|token_id=15|token_str=-
+ 24	ג	ג	NNP	NNP	gen=M|num=S	26	goeswith	_	biose=I-FAC|ner_escaped=FAC[26]|token_id=16|token_str=ג
+ 25	-	_	yyDASH	yyDASH	_	26	punct	_	biose=I-FAC|ner_escaped=FAC[26]|token_id=17|token_str=-
+@@ -129925,7 +129925,7 @@
+ 
+ # sent_id = 3534
+ # global_sent_id = 3534
+-# text_from_ud = "אי התענוגות", הממוקם בכפר של וולט דיסני, מיועד לבילויי לילה: יש בו דיסקוטקים, מסעדות, מופעי פנים וחוץ, משהו מעין שוקחתן אמריקאי, והכל באווירת שנות ה50 ו.
++# text_from_ud = "אי התענוגות", הממוקם בכפר של וולט דיסני, מיועד לבילויי לילה: יש בו דיסקוטקים, מסעדות, מופעי פנים וחוץ, משהו מעין שוקחתן אמריקאי, והכל באווירת שנות ה50 וה60.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	"	_	yyQUOT	yyQUOT	_	16	punct	_	biose=O|ner_escaped=_|token_id=1|token_str="
+@@ -129981,10 +129981,10 @@
+ 43-44	ה50	_	_	_	_	_	_	_	_
+ 43	ה	ה	DEF	DEF	_	44	def	_	biose=O|ner_escaped=_|token_id=34|token_str=ה50
+ 44	50	_	CD	CD	_	45	conj	_	biose=O|ner_escaped=_|token_id=34|token_str=ה50
+-45-47	ו ה 60	_	_	_	_	_	_	_	_
+-45	ו	ו	CONJ	CONJ	_	42	gobj	_	biose=O|ner_escaped=_|token_id=35|token_str=ו ה 60
+-46	ה	ה	DEF	DEF	_	47	def	_	biose=O|ner_escaped=_|token_id=35|token_str=ו ה 60
+-47	60	_	CD	CD	_	45	conj	_	biose=O|ner_escaped=_|token_id=35|token_str=ו ה 60
++45-47	וה60	_	_	_	_	_	_	_	_
++45	ו	ו	CONJ	CONJ	_	42	gobj	_	biose=O|ner_escaped=_|token_id=35|token_str=וה60
++46	ה	ה	DEF	DEF	_	47	def	_	biose=O|ner_escaped=_|token_id=35|token_str=וה60
++47	60	_	CD	CD	_	45	conj	_	biose=O|ner_escaped=_|token_id=35|token_str=וה60
+ 48	.	_	yyDOT	yyDOT	_	38	punct	_	biose=O|ner_escaped=_|token_id=36|token_str=.
+ 
+ # sent_id = 3535
+@@ -133221,7 +133221,7 @@
+ 10	אחרונה	אחרון	JJ	JJ	gen=F|num=S	8	amod	_	biose=O|ner_escaped=_|token_id=8|token_str=האחרונה
+ 11	,	_	yyCM	yyCM	_	12	punct	_	biose=O|ner_escaped=_|token_id=9|token_str=,
+ 12-13	בינהם	_	_	_	_	_	_	_	_
+-12	ביני	בין	IN	IN	_	3	parataxis	_	biose=O|ner_escaped=_|token_id=10|token_str=בינהם
++12	בינ	בין	IN	IN	_	3	parataxis	_	biose=O|ner_escaped=_|token_id=10|token_str=בינהם
+ 13	הם	הוא	S_PRN	S_PRN	gen=M|num=P|per=3	12	pobj	_	biose=O|ner_escaped=_|token_id=10|token_str=בינהם
+ 14	שרים	שר	NN	NN	gen=M|num=P	15	conj	_	biose=O|ner_escaped=_|token_id=11|token_str=שרים
+ 15-16	ושרים	_	_	_	_	_	_	_	_
+@@ -198557,16 +198557,16 @@
+ 
+ # sent_id = 5360
+ # global_sent_id = 5360
+-# text_from_ud = תקציב 1991 יגיע לכ07 מיליארד שקל.
++# text_from_ud = תקציב 1991 יגיע לכ70 מיליארד שקל.
+ # very_similar_sent_id = {2427}
+ # duplicate_sent_id = {}
+ 1	תקציב	תקציב	NNT	NNT	gen=M|num=S	3	subj	_	biose=O|ner_escaped=_|token_id=1|token_str=תקציב
+ 2	1991	_	CD	CD	_	1	gobj	_	biose=O|ner_escaped=_|token_id=2|token_str=1991
+ 3	יגיע	הגיע	VB	VB	gen=M|num=S|per=3|tense=FUTURE|HebBinyan=HIFIL	0	ROOT	_	biose=O|ner_escaped=_|token_id=3|token_str=יגיע
+-4-6	לכ07	_	_	_	_	_	_	_	_
+-4	ל	ל	IN	IN	_	3	prepmod	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ07
+-5	כ	כ	RB	RB	_	8	advmod	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ07
+-6	70	_	CD	CD	_	7	hd	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ07
++4-6	לכ70	_	_	_	_	_	_	_	_
++4	ל	ל	IN	IN	_	3	prepmod	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ70
++5	כ	כ	RB	RB	_	8	advmod	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ70
++6	70	_	CD	CD	_	7	hd	_	biose=O|ner_escaped=_|token_id=4|token_str=לכ70
+ 7	מיליארד	מיליארד	CD	CD	gen=M|num=S	8	number	_	biose=O|ner_escaped=_|token_id=5|token_str=מיליארד
+ 8	שקל	שקל	NN	NN	gen=M|num=S	4	pobj	_	biose=O|ner_escaped=_|token_id=6|token_str=שקל
+ 9	.	_	yyDOT	yyDOT	_	3	punct	_	biose=O|ner_escaped=_|token_id=7|token_str=.
+@@ -203756,7 +203756,7 @@
+ 9	ל	ל	PREPOSITION	PREPOSITION	_	6	prepmod	_	biose=O|ner_escaped=_|token_id=7|token_str=לבינוי
+ 10	בינוי	בינוי	NNT	NNT	gen=M|num=S	9	pobj	_	biose=O|ner_escaped=_|token_id=7|token_str=לבינוי
+ 11	120	_	CD	CD	_	12	number	_	biose=O|ner_escaped=_|token_id=8|token_str=120
+-12	O	O	NN	NN	gen=M|num=S	10	gobj	_	biose=O|ner_escaped=_|token_id=9|token_str=%
++12	%	_	NN	NN	gen=M|num=S	10	gobj	_	biose=O|ner_escaped=_|token_id=9|token_str=%
+ 13	.	_	yyDOT	yyDOT	_	6	punct	_	biose=O|ner_escaped=_|token_id=10|token_str=.
+ 
+ # sent_id = 5527
+@@ -203883,7 +203883,7 @@
+ 11	ל	ל	PREPOSITION	PREPOSITION	_	9	appos	_	biose=O|ner_escaped=_|token_id=9|token_str=לבינוי
+ 12	בינוי	בינוי	NNT	NNT	gen=M|num=S	11	pobj	_	biose=O|ner_escaped=_|token_id=9|token_str=לבינוי
+ 13	160	_	CD	CD	_	14	number	_	biose=O|ner_escaped=_|token_id=10|token_str=160
+-14	O	O	NN	NN	gen=M|num=S	12	gobj	_	biose=O|ner_escaped=_|token_id=11|token_str=%
++14	%	_	NN	NN	gen=M|num=S	12	gobj	_	biose=O|ner_escaped=_|token_id=11|token_str=%
+ 15	)	_	yyRRB	yyRRB	_	9	punct	_	biose=O|ner_escaped=_|token_id=12|token_str=)
+ 16-17	להקמת	_	_	_	_	_	_	_	_
+ 16	ל	ל	PREPOSITION	PREPOSITION	_	3	prepmod	_	biose=O|ner_escaped=_|token_id=13|token_str=להקמת
+@@ -204272,7 +204272,7 @@
+ 
+ # sent_id = 5541
+ # global_sent_id = 5541
+-# text_from_ud = שיעור הירידה מוערך בכ01%.
++# text_from_ud = שיעור הירידה מוערך בכ10%.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	שיעור	שיעור	NNT	NNT	gen=M|num=S	4	subj	_	biose=O|ner_escaped=_|token_id=1|token_str=שיעור
+@@ -204280,11 +204280,11 @@
+ 2	ה	ה	DEF	DEF	_	3	def	_	biose=O|ner_escaped=_|token_id=2|token_str=הירידה
+ 3	ירידה	ירידה	NN	NN	gen=F|num=S	1	gobj	_	biose=O|ner_escaped=_|token_id=2|token_str=הירידה
+ 4	מוערך	הוערך	BN	BN	gen=M|num=S|per=A|HebBinyan=HUFAL	0	ROOT	_	biose=O|ner_escaped=_|token_id=3|token_str=מוערך
+-5-7	בכ01	_	_	_	_	_	_	_	_
+-5	ב	ב	PREPOSITION	PREPOSITION	_	4	prepmod	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ01
+-6	כ	כ	ADVERB	ADVERB	_	7	det	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ01
+-7	10	_	CD	CD	_	5	pobj	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ01
+-8	O	O	NN	NN	gen=M|num=S	7	hd	_	biose=O|ner_escaped=_|token_id=5|token_str=%
++5-7	בכ10	_	_	_	_	_	_	_	_
++5	ב	ב	PREPOSITION	PREPOSITION	_	4	prepmod	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ10
++6	כ	כ	ADVERB	ADVERB	_	7	det	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ10
++7	10	_	CD	CD	_	5	pobj	_	biose=O|ner_escaped=_|token_id=4|token_str=בכ10
++8	%	_	NN	NN	gen=M|num=S	7	hd	_	biose=O|ner_escaped=_|token_id=5|token_str=%
+ 9	.	_	yyDOT	yyDOT	_	4	punct	_	biose=O|ner_escaped=_|token_id=6|token_str=.
+ 
+ # sent_id = 5542
+@@ -204347,7 +204347,7 @@
+ 45	ירידה	ירידה	NN	NN	gen=F|num=S	44	nn	_	biose=O|ner_escaped=_|token_id=36|token_str=ירידה
+ 46	של	של	POS	POS	_	45	posspmod	_	biose=O|ner_escaped=_|token_id=37|token_str=של
+ 47	13	_	CD	CD	_	48	number	_	biose=O|ner_escaped=_|token_id=38|token_str=13
+-48	O	O	NN	NN	gen=M|num=S	46	gobj	_	biose=O|ner_escaped=_|token_id=39|token_str=%
++48	%	_	NN	NN	gen=M|num=S	46	gobj	_	biose=O|ner_escaped=_|token_id=39|token_str=%
+ 49	.	_	yyDOT	yyDOT	_	1	punct	_	biose=O|ner_escaped=_|token_id=40|token_str=.
+ 
+ # sent_id = 5543
+@@ -204510,7 +204510,7 @@
+ 18	חלקו	חלק	NN	NN_S_PP	gen=M|num=S|suf_gen=M|suf_num=S|suf_per=3	17	obj	_	biose=O|ner_escaped=_|token_id=15|token_str=חלקו
+ 19	(	_	yyLRB	yyLRB	_	18	punct	_	biose=O|ner_escaped=_|token_id=16|token_str=(
+ 20	50	_	CD	CD	_	21	number	_	biose=O|ner_escaped=_|token_id=17|token_str=50
+-21	O	O	NN	NN	gen=M|num=S	18	appos	_	biose=O|ner_escaped=_|token_id=18|token_str=%
++21	%	_	NN	NN	gen=M|num=S	18	appos	_	biose=O|ner_escaped=_|token_id=18|token_str=%
+ 22	)	_	yyRRB	yyRRB	_	18	punct	_	biose=O|ner_escaped=_|token_id=19|token_str=)
+ 23-25	בנכס	_	_	_	_	_	_	_	_
+ 23	ב	ב	PREPOSITION	PREPOSITION	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=20|token_str=בנכס
+@@ -204538,7 +204538,7 @@
+ 11	תשואה	תשואה	NN	NN	gen=F|num=S	10	gobj	_	biose=O|ner_escaped=_|token_id=9|token_str=תשואה
+ 12	של	של	POS	POS	_	11	posspmod	_	biose=O|ner_escaped=_|token_id=10|token_str=של
+ 13	10	_	CD	CD	_	14	number	_	biose=O|ner_escaped=_|token_id=11|token_str=10
+-14	O	O	NN	NN	gen=M|num=S	12	gobj	_	biose=O|ner_escaped=_|token_id=12|token_str=%
++14	%	_	NN	NN	gen=M|num=S	12	gobj	_	biose=O|ner_escaped=_|token_id=12|token_str=%
+ 15	.	_	yyDOT	yyDOT	_	4	punct	_	biose=O|ner_escaped=_|token_id=13|token_str=.
+ 
+ # sent_id = 5549
+@@ -204649,7 +204649,7 @@
+ 
+ # sent_id = 5551
+ # global_sent_id = 5551
+-# text_from_ud = המחיר הממוצע למ"ר בעסקה זו הגיע לכ2,570 דולר למ"ר.
++# text_from_ud = המחיר הממוצע למ"ר בעסקה זו הגיע לכ2,075 דולר למ"ר.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1-2	המחיר	_	_	_	_	_	_	_	_
+@@ -204666,10 +204666,10 @@
+ 8	עסקה	עסקה	NN	NN	gen=F|num=S	7	pobj	_	biose=O|ner_escaped=_|token_id=4|token_str=בעסקה
+ 9	זו	זו	PRP	PRP	gen=F|num=S|per=3	8	det	_	biose=O|ner_escaped=_|token_id=5|token_str=זו
+ 10	הגיע	הגיע	VB	VB	gen=M|num=S|per=3|tense=PAST|HebBinyan=HIFIL	0	ROOT	_	biose=O|ner_escaped=_|token_id=6|token_str=הגיע
+-11-13	לכ2,570	_	_	_	_	_	_	_	_
+-11	ל	ל	IN	IN	_	10	prepmod	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,570
+-12	כ	כ	RB	RB	_	14	advmod	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,570
+-13	2,075	_	CD	CD	gen=M|num=P	14	number	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,570
++11-13	לכ2,075	_	_	_	_	_	_	_	_
++11	ל	ל	IN	IN	_	10	prepmod	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,075
++12	כ	כ	RB	RB	_	14	advmod	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,075
++13	2,075	_	CD	CD	gen=M|num=P	14	number	_	biose=O|ner_escaped=_|token_id=7|token_str=לכ2,075
+ 14	דולר	דולר	NN	NN	gen=M|num=S	11	pobj	_	biose=O|ner_escaped=_|token_id=8|token_str=דולר
+ 15-16	למ"ר	_	_	_	_	_	_	_	_
+ 15	ל	ל	PREPOSITION	PREPOSITION	_	14	prepmod	_	biose=O|ner_escaped=_|token_id=9|token_str=למ"ר
+@@ -215839,7 +215839,7 @@
+ 2-3	מ80	_	_	_	_	_	_	_	_
+ 2	מ	מ	PREPOSITION	PREPOSITION	_	1	prepmod	_	biose=O|ner_escaped=_|token_id=2|token_str=מ80
+ 3	80	_	CD	CD	_	4	number	_	biose=O|ner_escaped=_|token_id=2|token_str=מ80
+-4	O	O	NN	NN	gen=M|num=S	2	pobj	_	biose=O|ner_escaped=_|token_id=3|token_str=%
++4	%	_	NN	NN	gen=M|num=S	2	pobj	_	biose=O|ner_escaped=_|token_id=3|token_str=%
+ 5	אמרו	אמר	VB	VB	gen=M|num=P|per=3|tense=PAST|HebBinyan=PAAL	0	ROOT	_	biose=O|ner_escaped=_|token_id=4|token_str=אמרו
+ 6	כי	כי	CC	CC	_	5	comp	_	biose=O|ner_escaped=_|token_id=5|token_str=כי
+ 7	יעדיפו	העדיף	VB	VB	gen=M|num=P|per=3|tense=FUTURE|HebBinyan=HIFIL	6	ccomp	_	biose=O|ner_escaped=_|token_id=6|token_str=יעדיפו
+@@ -224392,7 +224392,7 @@
+ 
+ # sent_id = 6109
+ # global_sent_id = 6109
+-# text_from_ud = ארוחה לשניים, המבוססת על מנות דומות ועם קנקן של יין הבית, תגיע לכ001 ש"ח, בהחלט שווה את ההשקעה.
++# text_from_ud = ארוחה לשניים, המבוססת על מנות דומות ועם קנקן של יין הבית, תגיע לכ100 ש"ח, בהחלט שווה את ההשקעה.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	ארוחה	ארוחה	NN	NN	gen=F|num=S	18	subj	_	biose=O|ner_escaped=_|token_id=1|token_str=ארוחה
+@@ -224417,10 +224417,10 @@
+ 16	בית	בית	NN	NN	gen=M|num=S	14	gobj	_	biose=O|ner_escaped=_|token_id=12|token_str=הבית
+ 17	,	_	yyCM	yyCM	_	18	punct	_	biose=O|ner_escaped=_|token_id=13|token_str=,
+ 18	תגיע	הגיע	VB	VB	gen=F|num=S|per=3|tense=FUTURE|HebBinyan=HIFIL	0	ROOT	_	biose=O|ner_escaped=_|token_id=14|token_str=תגיע
+-19-21	לכ001	_	_	_	_	_	_	_	_
+-19	ל	ל	IN	IN	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ001
+-20	כ	כ	IN	IN	_	19	pobj	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ001
+-21	100	_	CD	CD	gen=M|num=S	22	number	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ001
++19-21	לכ100	_	_	_	_	_	_	_	_
++19	ל	ל	IN	IN	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ100
++20	כ	כ	IN	IN	_	19	pobj	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ100
++21	100	_	CD	CD	gen=M|num=S	22	number	_	biose=O|ner_escaped=_|token_id=15|token_str=לכ100
+ 22	ש"ח	ש"ח	NN	NN	gen=M|num=S	20	pobj	_	biose=O|ner_escaped=_|token_id=16|token_str=ש"ח
+ 23	,	_	yyCM	yyCM	_	18	punct	_	biose=O|ner_escaped=_|token_id=17|token_str=,
+ 24	בהחלט	בהחלט	RB	RB	_	25	advmod	_	biose=O|ner_escaped=_|token_id=18|token_str=בהחלט
+@@ -225184,7 +225184,7 @@
+ 
+ # sent_id = 6133
+ # global_sent_id = 6133
+-# text_from_ud = בהתבסס על המנות הללו, כולל בקבוק יין אדום מרלו דל פיאבה משנת 1987, תסתכם ארוחת ערב לשניים בכ012 ש"ח.
++# text_from_ud = בהתבסס על המנות הללו, כולל בקבוק יין אדום מרלו דל פיאבה משנת 1987, תסתכם ארוחת ערב לשניים בכ210 ש"ח.
+ # very_similar_sent_id = {}
+ # duplicate_sent_id = {}
+ 1	בהתבסס	התבסס	IN	IN	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=1|token_str=בהתבסס
+@@ -225212,10 +225212,10 @@
+ 21-22	לשניים	_	_	_	_	_	_	_	_
+ 21	ל	ל	PREPOSITION	PREPOSITION	_	19	prepmod	_	biose=O|ner_escaped=_|token_id=19|token_str=לשניים
+ 22	שניים	שני	CD	CD	gen=M|num=P	21	pobj	_	biose=O|ner_escaped=_|token_id=19|token_str=לשניים
+-23-25	בכ012	_	_	_	_	_	_	_	_
+-23	ב	ב	PREPOSITION	PREPOSITION	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ012
+-24	כ	כ	ADVERB	ADVERB	_	26	det	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ012
+-25	210	_	CD	CD	_	26	number	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ012
++23-25	בכ210	_	_	_	_	_	_	_	_
++23	ב	ב	PREPOSITION	PREPOSITION	_	18	prepmod	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ210
++24	כ	כ	ADVERB	ADVERB	_	26	det	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ210
++25	210	_	CD	CD	_	26	number	_	biose=O|ner_escaped=_|token_id=20|token_str=בכ210
+ 26	ש"ח	ש"ח	NN	NN	gen=M|num=S	23	pobj	_	biose=O|ner_escaped=_|token_id=21|token_str=ש"ח
+ 27	.	_	yyDOT	yyDOT	_	18	punct	_	biose=O|ner_escaped=_|token_id=22|token_str=.
+ 

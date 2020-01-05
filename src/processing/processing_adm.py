@@ -22,7 +22,11 @@ def get_tokens(data: str):
     params["content"] = data
     params["language"] = 'heb'
     try:
-        return api.tokens(params)
+        response = api.tokens(params)
+        del response['version']
+        del response['documentMetadata']
+        del response['responseHeaders']
+        return response
     except RosetteException as exception:
         print(exception)
 
@@ -32,7 +36,11 @@ def get_entities(data: str):
     params["content"] = data
     params["language"] = 'heb'
     try:
-        return api.entities(params)
+        response = api.entities(params)
+        del response['version']
+        del response['documentMetadata']
+        del response['responseHeaders']
+        return response
     except RosetteException as exception:
         print(exception)
 

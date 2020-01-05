@@ -1,5 +1,7 @@
-from src.modeling.modeling_xfmr import *
+import torch
 from torchcrf import CRF
+from transformers import PreTrainedTokenizer, PreTrainedModel
+from src.modeling.modeling_xfmr import XfmrNerModel
 
 
 class XfmrCrfNerModel(XfmrNerModel):

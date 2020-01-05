@@ -1,0 +1,56 @@
+--- data/clean/treebank/spmrl-01.conllu	2020-01-02 12:00:04.000000000 +0200
++++ data/clean/treebank/spmrl-01.conllu	2020-01-02 12:11:33.000000000 +0200
+@@ -94970,7 +94970,7 @@
+ # sent_id = 2524
+ # global_sent_id = 2524
+ # text_from_ud = המאמן: צבי רוזן.
+-# very_similar_sent_id = {2553, 2747, 2751}
++# very_similar_sent_id = {2526, 2553, 2555, 2747, 2751}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן
+@@ -95019,7 +95019,7 @@
+ # sent_id = 2526
+ # global_sent_id = 2526
+ # text_from_ud = המאמן: דרור בר נור.
+-# very_similar_sent_id = {2553, 2747}
++# very_similar_sent_id = {2524, 2553, 2555, 2747, 2751}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן
+@@ -95979,7 +95979,7 @@
+ # sent_id = 2553
+ # global_sent_id = 2553
+ # text_from_ud = המאמן: אליהו עופר.
+-# very_similar_sent_id = {2747, 2524, 2751}
++# very_similar_sent_id = {2555, 2747, 2524, 2526, 2751}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן
+@@ -96027,7 +96027,7 @@
+ # sent_id = 2555
+ # global_sent_id = 2555
+ # text_from_ud = המאמן: זאב זלצר.
+-# very_similar_sent_id = {2553, 2747}
++# very_similar_sent_id = {2524, 2526, 2553, 2747, 2751}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן
+@@ -102920,7 +102920,7 @@
+ # sent_id = 2747
+ # global_sent_id = 2747
+ # text_from_ud = המאמן: אריה בזרנו.
+-# very_similar_sent_id = {2553, 2524, 2751}
++# very_similar_sent_id = {2553, 2555, 2524, 2526, 2751}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן
+@@ -102986,7 +102986,7 @@
+ # sent_id = 2751
+ # global_sent_id = 2751
+ # text_from_ud = המאמן: יצחק שום.
+-# very_similar_sent_id = {2553, 2747, 2524}
++# very_similar_sent_id = {2553, 2555, 2747, 2524, 2526}
+ # duplicate_sent_id = {}
+ 1-2	המאמן	_	_	_	_	_	_	_	_
+ 1	ה	ה	DEF	DEF	_	2	def	_	biose=O|ner_escaped=_|token_id=1|token_str=המאמן

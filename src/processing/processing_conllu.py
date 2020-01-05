@@ -131,45 +131,6 @@ def parse_ud_sentence(lines: list) -> dict:
 
 def parse_spmrl_sentence(lines: list) -> dict:
     nodes = []
-    token_nodes = []
-    sent = {}
-    token_node = None
-    text_index = 0
-    for line in lines:
-        line = line.strip()
-        if line[0] == '#':
-            parse_spmrl_comment(sent, line)
-        else:
-            conllu_parts = line.split()
-            if len(conllu_parts[0].split('-')) > 1:
-                token_node = parse_spmrl_token_node(conllu_parts)
-            else:
-                node = parse_spmrl_node(conllu_parts)
-                node['misc']['SpaceAfter'] = False
-                nodes.append(node)
-                if not token_node or (node['id'] == token_node['from_node_id']):
-                    token_nodes.append([node])
-                    text_index += len(node['misc']['token_str'])
-                    space_after = text_index < len(sent['text']) and sent['text'][text_index] == ' '
-                    if token_node:
-                        token_node['misc'] = {'SpaceAfter': space_after}
-                        node['misc']['SpaceAfter'] = False
-                    else:
-                        node['misc']['SpaceAfter'] = space_after
-                    if space_after:
-                        text_index += 1
-                else:
-                    if node['id'] == token_node['to_node_id']:
-                        node['misc']['SpaceAfter'] = token_node['misc']['SpaceAfter']
-                        token_node = None
-                    token_nodes[-1].append(node)
-    sent['nodes'] = nodes
-    sent['token_nodes'] = token_nodes
-    return sent
-
-
-def parse_spmrl_sentence2(lines: list) -> dict:
-    nodes = []
     token_ids = defaultdict(list)
     token_nodes = {}
     sent = {}
@@ -207,13 +168,13 @@ def parse_spmrl_sentence2(lines: list) -> dict:
     return sent
 
 
-def read_conllu(path: Path, type: str) -> list:
+def read_conllu(path: Path, conll_type: str) -> list:
     file_lines = read_file(path)
     empty_line_nums = [-1] + [num for num, line in enumerate(file_lines) if not line.strip()]
     sent_sep = [(start_line_num + 1, end_line_num) for start_line_num, end_line_num in zip(empty_line_nums[:-1], empty_line_nums[1:])]
     sent_lines = [file_lines[start_line_num:end_line_num] for (start_line_num, end_line_num) in sent_sep]
-    if type == 'spmrl':
-        sentences = [parse_spmrl_sentence2(lines) for lines in sent_lines]
+    if conll_type == 'spmrl':
+        sentences = [parse_spmrl_sentence(lines) for lines in sent_lines]
     else:
         sentences = [parse_ud_sentence(lines) for lines in sent_lines]
     return sentences
