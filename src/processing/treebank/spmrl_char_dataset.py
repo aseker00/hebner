@@ -10,15 +10,17 @@ from src.processing.treebank.spmrl_xfmr_dataset import extract_token
 from src.processing import processing_conllu as conllu
 
 
-norm_labels_org = {'EVE': 'ORG', 'ANG': 'ORG', 'GPE': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
-norm_labels_loc = {'EVE': 'LOC', 'ANG': 'LOC', 'GPE': 'LOC', 'DUC': 'LOC', 'WOA': 'LOC', 'FAC': 'LOC'}
+norm_labels_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG',
+                   'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+norm_labels_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC',
+                   'EVE': 'LOC', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'LOC', 'FAC': 'LOC'}
 
 
 def normalize(label: str, norm_labels: dict = norm_labels_org) -> str:
-    if label == 'O':
-        return label
+    if label == 'O' or label[2:] not in norm_labels:
+        return 'O'
+    norm_label = norm_labels[label[2:]]
     norm_prefix = 'B' if label[0] == 'B' or label[0] == 'S' else 'I'
-    norm_label = norm_labels.get(label[2:], label[2:])
     return norm_prefix + '-' + norm_label
 
 
@@ -150,37 +152,48 @@ def extract_segmented_label_offsets(sentence: dict) -> list:
     return offsets
 
 
-def label_sentence(sentence: dict) -> CharLabeledSentence:
+def label_char_sentence(sentence: dict) -> CharLabeledSentence:
     sent_id = get_sent_id(sentence)
     text = get_text(sentence)
     tokenized_label_offsets = extract_tokenized_label_offsets(sentence)
     token_offsets = {offset[0]:offset[1] for offset in tokenized_label_offsets}
-    # token_label_offsets = extract_tokenized_label_offsets(sentence)
-    # seg_offsets = extract_token_offsets(sentence)
     segmented_label_offsets = extract_segmented_label_offsets(sentence)
-    seg_offsets = {offset[0]:offset[1] for offset in segmented_label_offsets}
-    seg_labels = {offset[0]:offset[-1] for offset in segmented_label_offsets}
-    char_labels = []
-    seg_start_offset = len(text)
-    seg_end_offset = len(text)
-    seg_label = 'O'
-    for i, c in enumerate(text):
-        if i in seg_offsets:
-            seg_start_offset = i
+    seg_offsets = {}
+    seg_labels = {}
+    for seg_label_offset in segmented_label_offsets:
+        seg_start_offset = seg_label_offset[0]
+        seg_end_offset = seg_label_offset[1]
+        seg_label = seg_label_offset[-1]
+        if seg_start_offset in seg_labels:
             seg_label = seg_labels[seg_start_offset]
-            for j in range(seg_end_offset, i):
-                char_labels.append(seg_label)
-            seg_end_offset = seg_offsets[seg_start_offset]
-        if seg_start_offset <= i < seg_end_offset:
-            char_labels.append(seg_label)
+        seg_offsets[seg_start_offset] = seg_end_offset
+        seg_labels[seg_start_offset] = seg_label
+    char_labels = ['O'] * len(text)
+    for seg_start_offset in seg_offsets:
+        seg_label = seg_labels[seg_start_offset]
+        if seg_label == 'O':
+            continue
+        char_labels[seg_start_offset] = seg_label
+        if seg_label[0] == 'B':
+            seg_label = 'I' + seg_label[1:]
+        else:
+            char_labels[seg_end_offset:seg_start_offset] = [seg_label] * (seg_start_offset - seg_end_offset)
+        seg_end_offset = seg_offsets[seg_start_offset]
+        char_labels[seg_start_offset+1:seg_end_offset] = [seg_label] * (seg_end_offset - seg_start_offset - 1)
     return CharLabeledSentence(sent_id, text, token_offsets, char_labels)
 
 
-def label_sentences(lattice_sentences: list) -> list:
-    return [label_sentence(ann_sent) for ann_sent in lattice_sentences]
+def label_char_sentences(lattice_sentences: list) -> list:
+    return [label_char_sentence(ann_sent) for ann_sent in lattice_sentences]
 
 
 def main(model_type: str = 'xlm'):
+    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
+    char_labeled_sentences = label_char_sentences(lattice_sentences)
+    sent_tokens = [sent.text[token_offset[0]:token_offset[1]] for sent in char_labeled_sentences for token_offset in
+                   sent.token_offsets]
+    sent_chars = sorted(list(set([c for token in sent_tokens for c in list(token)])))
+    ft_model = fasttext.load_model("model/ft/cc.he.300.bin")
     if model_type == 'bert':
         tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
         model = BertModel.from_pretrained('bert-base-multilingual-cased')
@@ -188,22 +201,17 @@ def main(model_type: str = 'xlm'):
         tokenizer = XLMTokenizer.from_pretrained('xlm-mlm-100-1280')
         model = XLMModel.from_pretrained('xlm-mlm-100-1280')
     x_model = XfmrNerModel(model_type, tokenizer, model)
-    ft_model = fasttext.load_model("model/ft/cc.he.300.bin")
-    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
-    labeled_sentences = label_sentences(lattice_sentences)
-    tokens = [sent.text[token_offset[0]:token_offset[1]] for sent in labeled_sentences for token_offset in
-              sent.token_offsets]
-    sent_chars = sorted(list(set([c for token in tokens for c in list(token)])))
-    tokenizer_chars = [tokenizer.pad_token] + sorted(list({tokenizer.cls_token, tokenizer.sep_token}))
+    tokenizer_chars = [x_model.pad_token] + sorted(list({x_model.cls_token, x_model.sep_token}))
     chars = tokenizer_chars + sent_chars
     char2id = {c: i for i, c in enumerate(chars)}
+    char2id = {k: v for k, v in sorted(char2id.items(), key=lambda item: item[1])}
     ner_model = CharXfmrNerModel(x_model, ft_model, char2id)
-    char_df = process_char_labeled_sentences(labeled_sentences, ner_model)
+    char_df = process_char_labeled_sentences(char_labeled_sentences, ner_model)
     data_file_path = Path('data/processed/{}-{}-{}.csv'.format('spmrl', model_type, 'char'))
     save_processed_dataset(char_df, data_file_path)
     token_data_file_path = Path('data/processed/{}-{}.csv'.format('spmrl', model_type))
     token_df = load_processed_dataset(token_data_file_path)
-    save_char_model_data_samples('.', labeled_sentences, token_df, char_df, 'spmrl', ner_model)
+    save_char_model_data_samples('.', char_labeled_sentences, token_df, char_df, 'spmrl', ner_model)
 
 
 if __name__ == "__main__":

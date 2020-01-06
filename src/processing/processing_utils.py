@@ -40,7 +40,6 @@ def save_char_model_data_samples(base_dir: str, labeled_sentences: list, token_d
     char_gb = char_df.groupby('sent_idx')
     char_groups = {i: char_gb.get_group(i) for i in char_gb.groups}
     # max_token_seq_len = max([len(token_groups[i].index) for i in token_groups])
-    # max_char_seq_len = max([len(labeled_sentences[i].text) + 2 for i in token_groups])
     max_char_seq_len = max([len(char_groups[i].index) for i in char_groups])
     data_samples = [cx_model.to_sample(i, labeled_sentences[i].text, token_groups[i], char_groups[i], max_char_seq_len)
                     for i in token_groups]
@@ -79,38 +78,38 @@ class TokenLabeledSentence:
     def xfmr_data_row(self, token_idx: int, x_model: XfmrNerModel) -> dict:
         token_offset = self.token_offsets[token_idx]
         if token_idx == 0:
-            token = x_model.cls_token
-            label = x_model.labels[0]
+            row_token = x_model.cls_token
+            row_label = x_model.labels[0]
         elif token_idx == len(self.token_offsets) - 1:
-            token = x_model.tokenizer.sep_token
-            label = x_model.labels[0]
+            row_token = x_model.tokenizer.sep_token
+            row_label = x_model.labels[0]
         else:
-            token = self.text[token_offset[0]:token_offset[1]]
-            label = self.labels[token_idx - 1]
-        label_id = x_model.label2id[label]
-        xfmr_tokens, xfmr_token_ids = x_model.tokenize(token)
-        return {'sent_idx': [self.sent_id] * len(xfmr_tokens),
-                'token_idx': [token_idx] * len(xfmr_tokens),
-                'token': [token] * len(xfmr_tokens),
-                'token_start_offset': [token_offset[0]] * len(xfmr_tokens),
-                'token_end_offset': [token_offset[1]] * len(xfmr_tokens),
-                'xfmr_token': xfmr_tokens,
-                'xfmr_token_id': xfmr_token_ids,
-                'token_label': [label] * len(xfmr_tokens),
-                'token_label_id': [label_id] * len(xfmr_tokens)}
+            row_token = self.text[token_offset[0]:token_offset[1]]
+            row_label = self.labels[token_idx - 1]
+        row_label_id = x_model.label2id[row_label]
+        row_xfmr_tokens, row_xfmr_token_ids = x_model.tokenize(row_token)
+        return {'sent_idx': [self.sent_id] * len(row_xfmr_tokens),
+                'token_idx': [token_idx] * len(row_xfmr_tokens),
+                'token': [row_token] * len(row_xfmr_tokens),
+                'token_start_offset': [token_offset[0]] * len(row_xfmr_tokens),
+                'token_end_offset': [token_offset[1]] * len(row_xfmr_tokens),
+                'xfmr_token': row_xfmr_tokens,
+                'xfmr_token_id': row_xfmr_token_ids,
+                'token_label': [row_label] * len(row_xfmr_tokens),
+                'token_label_id': [row_label_id] * len(row_xfmr_tokens)}
 
     def rex_data_row(self, token_idx: int, x_model: XfmrNerModel) -> dict:
         token_offset = self.token_offsets[token_idx]
-        token = self.text[token_offset[0]:token_offset[1]]
-        label = self.labels[token_idx]
-        label_id = x_model.label2id[label]
+        row_token = self.text[token_offset[0]:token_offset[1]]
+        row_label = self.labels[token_idx]
+        row_label_id = x_model.label2id[row_label]
         return {'sent_idx': [self.sent_id],
                 'token_idx': [token_idx],
-                'token': [token],
+                'token': [row_token],
                 'token_start_offset': [token_offset[0]],
                 'token_end_offset': [token_offset[1]],
-                'token_label': [label],
-                'token_label_id': [label_id]}
+                'token_label': [row_label],
+                'token_label_id': [row_label_id]}
 
     def to_adm(self) -> dict:
         entity_items = []
@@ -155,22 +154,49 @@ class CharLabeledSentence:
     def xfmr_data_row(self, token_idx: int, cx_model: CharXfmrNerModel) -> dict:
         token_offset = self.token_offsets[token_idx]
         if token_idx == 0:
-            chars = [cx_model.cls_token]
-            labels = [cx_model.labels[0]]
+            row_chars = [cx_model.cls_token]
+            row_labels = [cx_model.labels[0]]
         elif token_idx == len(self.token_offsets) - 1:
-            chars = [cx_model.sep_token]
-            labels = [cx_model.labels[0]]
+            row_chars = [cx_model.sep_token]
+            row_labels = [cx_model.labels[0]]
         else:
-            chars = list(self.text[token_offset[0]:token_offset[1]])
-            labels = [self.labels[i] for i in range(token_offset[0], token_offset[1])]
-        label_ids = [cx_model.label2id[label] for label in labels]
-        char_ids = [cx_model.char2id[c] for c in chars]
-        return {'sent_idx': [self.sent_id] * len(chars),
-                'token_idx': [token_idx] * len(chars),
-                'char': chars,
-                'char_id': char_ids,
-                'char_label': labels,
-                'char_label_id': label_ids}
+            row_chars = list(self.text[token_offset[0]:token_offset[1]])
+            row_labels = self.labels[token_offset[0]:token_offset[1]]
+        row_label_ids = [cx_model.label2id[label] for label in row_labels]
+        row_char_ids = [cx_model.char2id[c] for c in row_chars]
+        return {'sent_idx': [self.sent_id] * len(row_chars),
+                'token_idx': [token_idx] * len(row_chars),
+                'char': row_chars,
+                'char_id': row_char_ids,
+                'char_label': row_labels,
+                'char_label_id': row_label_ids}
+
+    def to_adm(self) -> dict:
+        label_offsets = [pos for token_offset in self.token_offsets for pos in list(range(token_offset[0],
+                                                                                          token_offset[1]))]
+        entity_items = []
+        cur_label = 'O'
+        cur_start_offset, cur_end_offset = 0, 0
+        cur_end_offset = 0
+        for label, label_offset in zip(self.labels, label_offsets):
+            if label[0] == 'B':
+                if cur_label != 'O':
+                    entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset),
+                                                                        'endOffset': int(cur_end_offset)}]}
+                    entity_items.append(entity_item)
+                cur_start_offset, cur_end_offset = label_offset, label_offset
+            elif label[0] == 'I':
+                cur_end_offset = label_offset
+                if cur_label == 'O':
+                    cur_start_offset = label_offset
+            elif cur_label != 'O':
+                entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset),
+                                                                    'endOffset': int(cur_end_offset)}]}
+                entity_items.append(entity_item)
+            cur_label = label
+        annotations = {'data': self.text, 'attributes': {'entities': {'type': 'list', 'itemType': 'entities',
+                                                                      'items': entity_items}}}
+        return annotations
 
 
 def process_xfmr_labeled_sentences(labeled_sentences: list, x_model: XfmrNerModel) -> pd.DataFrame:
@@ -194,6 +220,9 @@ def process_char_labeled_sentences(labeled_sentences: list, cx_model: CharXfmrNe
         sent.token_offsets.insert(0, (-1, 0))
         sent.token_offsets.append((len(sent.text) - 1, len(sent.text)))
         sent_data_rows = [sent.xfmr_data_row(i, cx_model) for i in range(len(sent.token_offsets))]
+        # token_ids = [token_id for data_row in sent_data_rows for token_id in data_row['xfmr_token']]
+        # if len(token_ids) > cx_model.max_seq_len:
+        #     continue
         for data_row in sent_data_rows:
             for k in data_row:
                 sent_data[k].extend(data_row[k])

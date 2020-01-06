@@ -58,7 +58,7 @@ def extract_token_offsets(sentence: dict) -> dict:
     return token_offsets
 
 
-def extract_label(token_node: list) -> str:
+def extract_token_label(token_node: list) -> str:
     label = 'O'
     for node in token_node:
         if node['misc']['biose'] != label:
@@ -71,21 +71,23 @@ def extract_label(token_node: list) -> str:
     return label
 
 
-def label_sentence(sentence: dict, gpe_label: str) -> TokenLabeledSentence:
+def label_token_sentence(sentence: dict, gpe_label: str) -> TokenLabeledSentence:
     sent_id = extract_sent_id(sentence)
     text = extract_text(sentence)
     token_nodes = sentence['token_nodes']
     token_offsets = extract_token_offsets(sentence)
-    # tokens = [extract_token(token_node) for token_node in token_nodes]
-    labels = [normalize(extract_label(token_node), gpe_label) for token_node in token_nodes]
+    labels = [normalize(extract_token_label(token_node), gpe_label) for token_node in token_nodes]
     return TokenLabeledSentence(sent_id, text, token_offsets, labels)
 
 
-def label_sentences(lattice_sentences: list, gpe_label: str = 'LOC') -> list:
-    return [label_sentence(ann_sent, gpe_label) for ann_sent in lattice_sentences]
+def label_token_sentences(lattice_sentences: list, gpe_label: str = 'LOC') -> list:
+    return [label_token_sentence(ann_sent, gpe_label) for ann_sent in lattice_sentences]
 
 
 def main(model_type: str = 'xlm'):
+    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
+    token_labeled_sentences = label_token_sentences(lattice_sentences, 'LOC')
+
     if model_type == 'bert':
         tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
         model = BertModel.from_pretrained('bert-base-multilingual-cased')
@@ -93,12 +95,11 @@ def main(model_type: str = 'xlm'):
         tokenizer = XLMTokenizer.from_pretrained('xlm-mlm-100-1280')
         model = XLMModel.from_pretrained('xlm-mlm-100-1280')
     ner_model = XfmrNerModel(model_type, tokenizer, model)
-    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
-    labeled_sentences = label_sentences(lattice_sentences, 'LOC')
-    df = process_xfmr_labeled_sentences(labeled_sentences, ner_model)
+
+    df = process_xfmr_labeled_sentences(token_labeled_sentences, ner_model)
     data_file_path = Path('data/processed/{}-{}.csv'.format('spmrl', model_type))
     save_processed_dataset(df, data_file_path)
-    save_model_data_samples('.', labeled_sentences, df, 'spmrl', ner_model)
+    save_model_data_samples('.', token_labeled_sentences, df, 'spmrl', ner_model)
 
 
 if __name__ == "__main__":

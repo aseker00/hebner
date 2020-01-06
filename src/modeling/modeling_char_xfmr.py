@@ -41,9 +41,13 @@ class CharXfmrNerModel(nn.Module):
     def pad_token(self):
         return self.x_model.pad_token
 
+    @property
+    def max_seq_len(self):
+        return self.x_model.max_seq_len
+
     def forward(self, token_input_ids: torch.Tensor, token_attention_mask: torch.Tensor, char_token_idx: torch.Tensor,
                 char_input_ids: torch.Tensor, char_attention_mask: torch.Tensor, char_label_ids: torch.Tensor = None):
-        x_token_outputs = self.x_model.model(token_input_ids, attention_mask=token_attention_mask)
+        x_token_outputs = self.x_model.model(token_input_ids[:, :self.max_seq_len], attention_mask=token_attention_mask[:, :self.max_seq_len])
         x_token_sequence_output = x_token_outputs[0]
         x_token_sequence_output = self.x_model.dropout(x_token_sequence_output)
         embedded_chars = self.char_emb(char_input_ids)

@@ -12,12 +12,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def main(model_type: str = 'xlm'):
-    if model_type == 'bert':
-        tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
-        model = BertModel.from_pretrained('bert-base-multilingual-cased')
-    else:
-        tokenizer = XLMTokenizer.from_pretrained('xlm-mlm-100-1280')
-        model = XLMModel.from_pretrained('xlm-mlm-100-1280')
     train_samples = load_model_data_samples('.', 'spmrl', model_type)
     train_dataset, train_samples = to_token_dataset(train_samples)
     train_sampler = RandomSampler(train_dataset)
@@ -30,19 +24,26 @@ def main(model_type: str = 'xlm'):
     test_dataset, test_samples = to_token_dataset(test_samples)
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=8)
-    epochs = 3
-    num_training_steps = len(train_dataloader.dataset) * epochs / train_dataloader.batch_size
-    num_warmup_steps = num_training_steps/10
-    lr = 1e-5
+
+    if model_type == 'bert':
+        tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
+        model = BertModel.from_pretrained('bert-base-multilingual-cased')
+    else:
+        tokenizer = XLMTokenizer.from_pretrained('xlm-mlm-100-1280')
+        model = XLMModel.from_pretrained('xlm-mlm-100-1280')
     ner_model = XfmrNerModel(model_type, tokenizer, model)
     if torch.cuda.is_available():
         ner_model.cuda(device)
+    lr = 1e-5
     optimizer = AdamW(ner_model.parameters(), lr=lr)
+    num_training_steps = len(train_dataloader.dataset) / train_dataloader.batch_size
+    num_warmup_steps = num_training_steps / 10
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps,
                                                 num_training_steps=num_training_steps)
     max_grad_norm = 1.0
     ner_model_optimizer = ModelOptimizer(optimizer, scheduler, ner_model.parameters(), max_grad_norm)
     print_every = 1
+    epochs = 3
     for i in range(epochs):
         epoch = i + 1
         ner_model.train()
@@ -68,7 +69,7 @@ def main(model_type: str = 'xlm'):
                 for sent, annotation in zip(decoded_pred, pred_adms):
                     with open('{}/{}.adm.json'.format(pred_dir, sent.sent_id), 'w') as outfile:
                         json.dump(annotation, outfile)
-                cmd = muc_eval_cmdline.format('.', gold_dir, pred_dir,  '.', '.', project_type, epoch)
+                cmd = muc_eval_cmdline.format('test', gold_dir, pred_dir,  'test', 'test', project_type, epoch)
                 bash_command(cmd)
 
 
