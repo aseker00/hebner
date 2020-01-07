@@ -1,4 +1,6 @@
 import json
+from pathlib import Path
+
 import torch
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.sampler import RandomSampler, SequentialSampler
@@ -12,15 +14,21 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def main(model_type: str = 'xlm'):
-    train_samples = load_model_data_samples('.', 'spmrl', model_type)
+    train_dataset_name = '{}-{}'.format('spmrl', model_type)
+    train_sample_file_path = Path('data/processed/{}.pkl'.format(train_dataset_name))
+    train_samples = load_model_data_samples(train_sample_file_path)
     train_dataset, train_samples = to_token_dataset(train_samples)
     train_sampler = RandomSampler(train_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=32)
-    valid_samples = load_model_data_samples('.', 'news', model_type)
+    valid_dataset_name = '{}-{}'.format('news', model_type)
+    valid_sample_file_path = Path('data/processed/{}.pkl'.format(valid_dataset_name))
+    valid_samples = load_model_data_samples(valid_sample_file_path)
     valid_dataset, valid_samples = to_token_dataset(valid_samples)
     valid_sampler = SequentialSampler(valid_dataset)
     valid_dataloader = DataLoader(valid_dataset, sampler=valid_sampler, batch_size=8)
-    test_samples = load_model_data_samples('.', 'fin', model_type)
+    test_dataset_name = '{}-{}'.format('fin', model_type)
+    test_sample_file_path = Path('data/processed/{}.pkl'.format(test_dataset_name))
+    test_samples = load_model_data_samples(test_sample_file_path)
     test_dataset, test_samples = to_token_dataset(test_samples)
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=8)
@@ -69,7 +77,9 @@ def main(model_type: str = 'xlm'):
                 for sent, annotation in zip(decoded_pred, pred_adms):
                     with open('{}/{}.adm.json'.format(pred_dir, sent.sent_id), 'w') as outfile:
                         json.dump(annotation, outfile)
-                cmd = muc_eval_cmdline.format('test', gold_dir, pred_dir,  'test', 'test', project_type, epoch)
+                cmd = muc_eval_cmdline.format('{}/{}'.format('.', 'test'), gold_dir, pred_dir,
+                                              '.', '{}/{}'.format('.', 'test'),
+                                              project_type, epoch)
                 bash_command(cmd)
 
 

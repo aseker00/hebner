@@ -86,7 +86,8 @@ def label_token_sentences(lattice_sentences: list, gpe_label: str = 'LOC') -> li
 
 def main(model_type: str = 'xlm'):
     lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
-    token_labeled_sentences = label_token_sentences(lattice_sentences, 'LOC')
+    gpe_label = 'ORG'
+    token_labeled_sentences = label_token_sentences(lattice_sentences, gpe_label)
 
     if model_type == 'bert':
         tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
@@ -97,9 +98,11 @@ def main(model_type: str = 'xlm'):
     ner_model = XfmrNerModel(model_type, tokenizer, model)
 
     df = process_xfmr_labeled_sentences(token_labeled_sentences, ner_model)
-    data_file_path = Path('data/processed/{}-{}.csv'.format('spmrl', model_type))
+    dataset_name = '{}-{}-{}'.format('spmrl', model_type, 'gpe-loc' if gpe_label == 'LOC' else 'gpe-org')
+    data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
     save_processed_dataset(df, data_file_path)
-    save_model_data_samples('.', token_labeled_sentences, df, 'spmrl', ner_model)
+    sample_file_path = Path('data/processed/{}.pkl'.format(dataset_name))
+    save_model_data_samples(sample_file_path, token_labeled_sentences, df, ner_model)
 
 
 if __name__ == "__main__":

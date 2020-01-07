@@ -1,14 +1,11 @@
 import errno
 import os
 import subprocess
-
 import pandas as pd
 from seqeval.metrics import precision_score, recall_score, f1_score, accuracy_score
 from sklearn.metrics import classification_report
 from torch import nn
-
 from src.modeling.modeling_xfmr import XfmrNerModel
-from src.processing.processing_utils import TokenLabeledSentence
 
 
 # model = HebNER("xl")
@@ -51,13 +48,6 @@ class ModelOptimizer:
         self.optimizer.step()
         self.scheduler.step()
         self.optimizer.zero_grad()
-
-
-# def print_sample(epoch, phase, step, gold_sent: TokenLabeledSentence, pred_sent: TokenLabeledSentence):
-#     print('epoch: {}, {}: {} Sentence ID     : {}'.format(epoch, phase, step, gold_sent.sent_id))
-#     print('epoch: {}, {}: {} Tokens          : {}'.format(epoch, phase, step, ' '.join(gold_sent.tokens)))
-#     print('epoch: {}, {}: {} Gold labels     : {}'.format(epoch, phase, step, ' '.join(gold_sent.labels)))
-#     print('epoch: {}, {}: {} Predicted labels: {}'.format(epoch, phase, step, ' '.join(pred_sent.labels)))
 
 
 def print_sample(epoch, phase, step, gold_sent, pred_sent):

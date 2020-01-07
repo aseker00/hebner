@@ -1,6 +1,5 @@
 from pathlib import Path
 import fasttext
-import pandas as pd
 from transformers import XLMTokenizer, XLMModel, BertTokenizer, BertModel
 from src.modeling.modeling_char_xfmr import CharXfmrNerModel
 from src.modeling.modeling_xfmr import XfmrNerModel
@@ -56,7 +55,9 @@ def main(model_type: str = 'xlm'):
                        sent.token_offsets]
         sent_chars = sorted(list(set([c for token in sent_tokens for c in list(token)])))
         chars.update(sent_chars)
-    char_data_file_path = Path('data/processed/{}-{}-{}.csv'.format('spmrl', model_type, 'char'))
+    spmrl_dataset_name = '{}-{}-{}-{}'.format('spmrl', 'char', model_type, 'gpe-loc')
+    char_data_file_path = Path('data/processed/{}.csv'.format(spmrl_dataset_name))
+    # char_data_file_path = Path('data/processed/{}-{}-{}.csv'.format('spmrl', model_type, 'char'))
     train_df = load_processed_dataset(char_data_file_path)
     char2id = {a[0]: a[1] for a in train_df[['char', 'char_id']].to_numpy()}
     diff_chars = sorted(list(chars.difference(char2id.keys())))
@@ -77,14 +78,17 @@ def main(model_type: str = 'xlm'):
     for project_type in ['news', 'fin']:
         char_labeled_sentences = project_sentences[project_type]
         char_df = process_char_labeled_sentences(char_labeled_sentences, ner_model)
-        token_data_file_path = Path('data/processed/{}-{}.csv'.format(project_type, model_type))
+        dataset_name = '{}-{}-{}'.format(project_type, 'char', model_type)
+        data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
+        save_processed_dataset(char_df, data_file_path)
+        token_dataset_name = '{}-{}'.format(project_type, model_type)
+        token_data_file_path = Path('data/processed/{}.csv'.format(token_dataset_name))
         token_df = load_processed_dataset(token_data_file_path)
+        # merged_df = pd.merge(token_df, char_df, on=['sent_idx', 'token_idx'])
         m = char_df.sent_idx.isin(token_df.sent_idx)
         char_df = char_df[m]
-        # merged_df = pd.merge(token_df, char_df, on=['sent_idx', 'token_idx'])
-        data_file_path = Path('data/processed/{}-{}-{}.csv'.format(project_type, model_type, 'char'))
-        save_processed_dataset(char_df, data_file_path)
-        save_char_model_data_samples('.', char_labeled_sentences, token_df, char_df, project_type, ner_model)
+        sample_file_path = Path('data/processed/{}.pkl'.format(dataset_name))
+        save_char_model_data_samples(sample_file_path, char_labeled_sentences, token_df, char_df, ner_model)
 
 
 if __name__ == "__main__":

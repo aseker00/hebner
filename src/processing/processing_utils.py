@@ -14,25 +14,23 @@ def load_processed_dataset(dataset_file_path: Path) -> pd.DataFrame:
     return pd.read_csv(str(dataset_file_path))
 
 
-def save_model_data_samples(base_dir: str, labeled_sentences: list, token_df: pd.DataFrame, dataset_name: str,
-                            x_model: XfmrNerModel):
+def save_model_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, x_model: XfmrNerModel):
     labeled_sentences = {sent.sent_id: sent for sent in labeled_sentences}
     token_gb = token_df.groupby('sent_idx')
     token_groups = {i: token_gb.get_group(i) for i in token_gb.groups}
     max_token_seq_len = max([len(token_groups[i].index) for i in token_groups])
     data_samples = [x_model.to_sample(i, labeled_sentences[i].text, token_groups[i], max_token_seq_len) for i in
                     token_groups]
-    with open('{}/data/processed/{}-{}.pkl'.format(base_dir, dataset_name, x_model.name), 'wb') as f:
+    with open(str(dataset_file_path), 'wb') as f:
         pickle.dump(data_samples, file=f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_model_data_samples(base_dir: str, dataset_name, model_name: str) -> list:
-    with open('{}/data/processed/{}-{}.pkl'.format(base_dir, dataset_name, model_name), 'rb') as f:
+def load_model_data_samples(dataset_file_path: Path) -> list:
+    with open(str(dataset_file_path), 'rb') as f:
         return pickle.load(f)
 
 
-def save_char_model_data_samples(base_dir: str, labeled_sentences: list, token_df: pd.DataFrame, char_df: pd.DataFrame,
-                                 dataset_name: str, cx_model: CharXfmrNerModel):
+def save_char_model_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, char_df: pd.DataFrame, cx_model: CharXfmrNerModel):
     # merged_df = pd.merge(token_df, char_df, on=['sent_idx', 'token_idx'])
     labeled_sentences = {sent.sent_id: sent for sent in labeled_sentences}
     token_gb = token_df.groupby('sent_idx')
@@ -43,13 +41,12 @@ def save_char_model_data_samples(base_dir: str, labeled_sentences: list, token_d
     max_char_seq_len = max([len(char_groups[i].index) for i in char_groups])
     data_samples = [cx_model.to_sample(i, labeled_sentences[i].text, token_groups[i], char_groups[i], max_char_seq_len)
                     for i in token_groups]
-    with open('{}/data/processed/{}-{}-{}.pkl'.format(base_dir, dataset_name, cx_model.name, 'char'), 'wb') as f:
+    with open(str(dataset_file_path), 'wb') as f:
         pickle.dump(data_samples, file=f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_char_model_data_samples(base_dir: str, dataset_name, model_name: str) -> list:
-    with open('{}/data/processed/{}-{}-{}.pkl'.format(base_dir, dataset_name, model_name, 'char'), 'rb') as f:
-        return pickle.load(f)
+def load_char_model_data_samples(dataset_file_path: Path) -> list:
+    return load_model_data_samples(dataset_file_path)
 
 
 def is_english(s):

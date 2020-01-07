@@ -10,13 +10,11 @@ from src.processing.treebank.spmrl_xfmr_dataset import extract_token
 from src.processing import processing_conllu as conllu
 
 
-norm_labels_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG',
-                   'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
-norm_labels_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC',
-                   'EVE': 'LOC', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'LOC', 'FAC': 'LOC'}
+norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
 
 
-def normalize(label: str, norm_labels: dict = norm_labels_org) -> str:
+def normalize(label: str, norm_labels: dict) -> str:
     if label == 'O' or label[2:] not in norm_labels:
         return 'O'
     norm_label = norm_labels[label[2:]]
@@ -130,34 +128,34 @@ def extract_segment_offsets(sentence: dict) -> list:
     return offsets
 
 
-def extract_tokenized_label_offsets(sentence: dict) -> list:
+def extract_tokenized_label_offsets(sentence: dict, norm_labels: dict) -> list:
     offsets = []
     token_nodes = sentence['token_nodes']
     token_labels = [extract_tokenized_label(token_node) for token_node in token_nodes]
-    token_labels = [normalize(label) for label in token_labels]
+    token_labels = [normalize(label, norm_labels) for label in token_labels]
     token_offsets = extract_token_offsets(sentence)
     for token_label, (start_offset, end_offset, token) in zip(token_labels, sorted(token_offsets)):
         offsets.append((start_offset, end_offset, token, token_label))
     return offsets
 
 
-def extract_segmented_label_offsets(sentence: dict) -> list:
+def extract_segmented_label_offsets(sentence: dict, norm_labels: dict) -> list:
     offsets = []
     token_nodes = sentence['token_nodes']
     seg_labels = [seg_label for token_node in token_nodes for seg_label in extract_segmented_labels(token_node)]
-    seg_labels = [normalize(label) for label in seg_labels]
+    seg_labels = [normalize(label, norm_labels) for label in seg_labels]
     seg_offsets = extract_segment_offsets(sentence)
     for seg_label, (start_offset, end_offset, seg) in zip(seg_labels, seg_offsets):
         offsets.append((start_offset, end_offset, seg, seg_label))
     return offsets
 
 
-def label_char_sentence(sentence: dict) -> CharLabeledSentence:
+def label_char_sentence(sentence: dict, norm_labels: dict) -> CharLabeledSentence:
     sent_id = get_sent_id(sentence)
     text = get_text(sentence)
-    tokenized_label_offsets = extract_tokenized_label_offsets(sentence)
+    tokenized_label_offsets = extract_tokenized_label_offsets(sentence, norm_labels)
     token_offsets = {offset[0]:offset[1] for offset in tokenized_label_offsets}
-    segmented_label_offsets = extract_segmented_label_offsets(sentence)
+    segmented_label_offsets = extract_segmented_label_offsets(sentence, norm_labels)
     seg_offsets = {}
     seg_labels = {}
     for seg_label_offset in segmented_label_offsets:
@@ -183,13 +181,14 @@ def label_char_sentence(sentence: dict) -> CharLabeledSentence:
     return CharLabeledSentence(sent_id, text, token_offsets, char_labels)
 
 
-def label_char_sentences(lattice_sentences: list) -> list:
-    return [label_char_sentence(ann_sent) for ann_sent in lattice_sentences]
+def label_char_sentences(lattice_sentences: list, norm_labels: dict) -> list:
+    return [label_char_sentence(ann_sent, norm_labels) for ann_sent in lattice_sentences]
 
 
 def main(model_type: str = 'xlm'):
     lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
-    char_labeled_sentences = label_char_sentences(lattice_sentences)
+    norm_labels = norm_labels_gpe_org
+    char_labeled_sentences = label_char_sentences(lattice_sentences, norm_labels)
     sent_tokens = [sent.text[token_offset[0]:token_offset[1]] for sent in char_labeled_sentences for token_offset in
                    sent.token_offsets]
     sent_chars = sorted(list(set([c for token in sent_tokens for c in list(token)])))
@@ -207,11 +206,14 @@ def main(model_type: str = 'xlm'):
     char2id = {k: v for k, v in sorted(char2id.items(), key=lambda item: item[1])}
     ner_model = CharXfmrNerModel(x_model, ft_model, char2id)
     char_df = process_char_labeled_sentences(char_labeled_sentences, ner_model)
-    data_file_path = Path('data/processed/{}-{}-{}.csv'.format('spmrl', model_type, 'char'))
+    dataset_name = '{}-{}-{}-{}'.format('spmrl', 'char', model_type, 'gpe-loc' if norm_labels == norm_labels_gpe_loc else 'gpe-org')
+    data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
     save_processed_dataset(char_df, data_file_path)
-    token_data_file_path = Path('data/processed/{}-{}.csv'.format('spmrl', model_type))
+    token_dataset_name = '{}-{}-{}'.format('spmrl', model_type, 'gpe-loc' if norm_labels == norm_labels_gpe_loc else 'gpe-org')
+    token_data_file_path = Path('data/processed/{}.csv'.format(token_dataset_name))
     token_df = load_processed_dataset(token_data_file_path)
-    save_char_model_data_samples('.', char_labeled_sentences, token_df, char_df, 'spmrl', ner_model)
+    sample_file_path = Path('data/processed/{}.pkl'.format(dataset_name))
+    save_char_model_data_samples(sample_file_path, char_labeled_sentences, token_df, char_df, ner_model)
 
 
 if __name__ == "__main__":

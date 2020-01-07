@@ -22,9 +22,10 @@ def main(model_type: str = 'xlm'):
     ner_model = XfmrNerModel(model_type, tokenizer, model)
 
     for project_type in ['news', 'fin']:
-        rex_data_file_path = Path('data/processed/{}-{}-{}.csv'.format(project_type, model_type, 'rex'))
         rex_labeled_sentences = project_sentences[project_type]
         df = process_rex_labeled_sentences(rex_labeled_sentences, ner_model)
+        dataset_name = '{}-{}-{}'.format(project_type, model_type, 'rex')
+        rex_data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
         save_processed_dataset(df, rex_data_file_path)
 
 

@@ -73,11 +73,13 @@ def main(model_type: str = 'xlm'):
     ner_model = XfmrNerModel(model_type, tokenizer, model)
 
     for project_type in ['news', 'fin']:
-        data_file_path = Path('data/processed/{}-{}.csv'.format(project_type, model_type))
         token_labeled_sentences = project_sentences[project_type]
         df = process_xfmr_labeled_sentences(token_labeled_sentences, ner_model)
+        dataset_name = '{}-{}'.format(project_type, model_type)
+        data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
         save_processed_dataset(df, data_file_path)
-        save_model_data_samples('.', token_labeled_sentences, df, project_type, ner_model)
+        sample_file_path = Path('data/processed/{}.pkl'.format(dataset_name))
+        save_model_data_samples(sample_file_path, token_labeled_sentences, df, ner_model)
 
 
 if __name__ == "__main__":
