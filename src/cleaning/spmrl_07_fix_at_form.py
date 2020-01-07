@@ -50,7 +50,7 @@ for line in [l.strip() for l in lines]:
     elif '# sent_id = ' in line:
         sent_id = int(line[len('# sent_id = '):])
 
-lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-06.conllu'), 'spmrl')
+lattice_sentences = conllu.read_conllu_sentences(Path('data/clean/treebank/spmrl-06.conllu'), 'spmrl')
 fixed_forms = [fix(sent) for sent in lattice_sentences]
 fixed_forms = {k: v for fixed_form in fixed_forms for k, v in fixed_form.items()}
 with open('data/clean/treebank/spmrl-07.conllu', 'w') as f:

@@ -4,7 +4,7 @@ from src.modeling.modeling_xfmr import *
 
 class CharXfmrNerModel(nn.Module):
 
-    def __init__(self, x_model: XfmrNerModel, ft_model: _FastText, char2id: dict, char_dropout_prob=0.5):
+    def __init__(self, x_model: XfmrNerModel, ft_model: _FastText, char2id: dict, char_dropout_prob: float = 0.5):
         super(CharXfmrNerModel, self).__init__()
         self.x_model = x_model
         self.ft_model = ft_model
@@ -12,6 +12,10 @@ class CharXfmrNerModel(nn.Module):
         self.char_vectors = torch.tensor([ft_model.get_word_vector(c) for c in char2id], dtype=torch.float)
         self.char_emb = nn.Embedding.from_pretrained(self.char_vectors, freeze=False, padding_idx=0)
         self.char_dropout = nn.Dropout(char_dropout_prob)
+
+    @property
+    def classifier(self):
+        return self.x_model.classifier
 
     @property
     def name(self):

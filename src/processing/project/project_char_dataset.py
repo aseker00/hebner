@@ -45,7 +45,7 @@ def label_char_sentences(annotated_sentences: list, normalize_func) -> list:
 def main(model_type: str = 'xlm'):
     project_sentences = {}
     for project_type in ['news', 'fin']:
-        annotated_sentences = adm.read_project(Path('data/clean/project/{}'.format(project_type)))
+        annotated_sentences = adm.read_project_sentences(Path('data/clean/project/{}'.format(project_type)))
         char_labeled_sentences = label_char_sentences(annotated_sentences, normalize)
         project_sentences[project_type] = char_labeled_sentences
     chars = set()

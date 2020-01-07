@@ -6,8 +6,8 @@ from src.modeling.modeling_xfmr import XfmrNerModel
 
 class XfmrCrfNerModel(XfmrNerModel):
 
-    def __init__(self, name: str, tokenizer: PreTrainedTokenizer, model: PreTrainedModel, hidden_dropout_prob=0.5):
-        super(XfmrCrfNerModel, self).__init__(name, tokenizer, model, hidden_dropout_prob)
+    def __init__(self, name: str, tokenizer: PreTrainedTokenizer, model: PreTrainedModel, classifier_input_feat_num: int = None, hidden_dropout_prob: float = 0.5):
+        super(XfmrCrfNerModel, self).__init__(name, tokenizer, model, classifier_input_feat_num, hidden_dropout_prob)
         self.crf = CRF(self.num_labels, batch_first=True)
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.ByteTensor, label_ids: torch.Tensor = None):

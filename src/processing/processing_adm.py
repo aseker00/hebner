@@ -4,7 +4,7 @@ from copy import deepcopy
 from os import listdir
 from os.path import join
 from pathlib import Path
-
+import pandas as pd
 from rosette.api import API, DocumentParameters, RosetteException
 import warnings
 # warnings.filterwarnings("ignore", message="numpy.dtype size changed")
@@ -177,7 +177,12 @@ def extract_entity_mentions(annotations: dict) -> (list, list):
     return mentions, types
 
 
-def read_project(project_dir_path: Path) -> list:
+def to_dataframe_rows(sentence: dict) -> list:
+    rows = []
+    return rows
+
+
+def read_project_sentences(project_dir_path: Path) -> list:
     sentences = []
     files_paths = [join(str(project_dir_path), f) for f in listdir(str(project_dir_path))]
     for file_path in files_paths:
@@ -189,6 +194,13 @@ def read_project(project_dir_path: Path) -> list:
             entity_tokens, token_entities = get_token_entities(tokens, entities)
             sentences.append((text, tokens, tags, entities, entity_types, entity_tokens, token_entities))
     return sentences
+
+
+def read_project_dataframe(project_dir_path: Path) -> pd.DataFrame:
+    sentences = read_project_sentences(project_dir_path)
+    rows = [row for sentence in sentences for row in to_dataframe_rows(sentence)]
+    keys = ['sent_id', 'token_id', 'token_str', 'biose', 'postag', 'start_offset', 'end_offset']
+    return pd.DataFrame(rows, columns=keys)
 
 
 def annotate_entities(dir_path: Path) -> list:

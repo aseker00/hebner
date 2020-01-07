@@ -85,7 +85,7 @@ def label_token_sentences(lattice_sentences: list, gpe_label: str = 'LOC') -> li
 
 
 def main(model_type: str = 'xlm'):
-    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
+    lattice_sentences = conllu.read_conllu_sentences(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
     gpe_label = 'ORG'
     token_labeled_sentences = label_token_sentences(lattice_sentences, gpe_label)
 

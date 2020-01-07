@@ -1,5 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
+import pandas as pd
 
 
 def read_file(path: Path) -> list:
@@ -168,7 +169,23 @@ def parse_spmrl_sentence(lines: list) -> dict:
     return sent
 
 
-def read_conllu(path: Path, conll_type: str) -> list:
+def to_dataframe_rows(sentence: dict) -> list:
+    rows = []
+    for node in sentence['nodes']:
+        misc = node.pop('misc')
+        node.pop('feats')
+        # values = [sent['id'], misc['token_id'], misc['token_str'], misc['biose']] + list(node.values())
+        # row = {k: v for k, v in zip(keys, values)}
+        node['sent_id'] = sentence['id']
+        node['token_id'] = misc['token_id']
+        node['token_str'] = misc['token_str']
+        node['biose'] = misc['biose']
+        node['space_after'] = misc['SpaceAfter']
+        rows.append(node)
+    return rows
+
+
+def read_conllu_sentences(path: Path, conll_type: str) -> list:
     file_lines = read_file(path)
     empty_line_nums = [-1] + [num for num, line in enumerate(file_lines) if not line.strip()]
     sent_sep = [(start_line_num + 1, end_line_num) for start_line_num, end_line_num in zip(empty_line_nums[:-1], empty_line_nums[1:])]
@@ -178,6 +195,14 @@ def read_conllu(path: Path, conll_type: str) -> list:
     else:
         sentences = [parse_ud_sentence(lines) for lines in sent_lines]
     return sentences
+
+
+def read_conllu_dataframe(path: Path, conll_type: str) -> pd.DataFrame:
+    sentences = read_conllu_sentences(path, conll_type)
+    rows = [row for sentence in sentences for row in to_dataframe_rows(sentence)]
+    keys = ['sent_id', 'token_id', 'token_str', 'biose', 'id', 'form', 'lemma', 'cpostag', 'postag', 'feats_str',
+            'head', 'deprel', 'dummy', 'misc_str', 'space_after']
+    return pd.DataFrame(rows, columns=keys)
 
 
 def filter_sentences(sentences: list, field_name: str):

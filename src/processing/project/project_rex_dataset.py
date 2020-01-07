@@ -9,7 +9,7 @@ from src.processing.project.project_xfmr_dataset import label_token_sentences, n
 def main(model_type: str = 'xlm'):
     project_sentences = {}
     for project_type in ['news', 'fin']:
-        rex_sentences = adm.read_project(Path('data/clean/project-{}/{}'.format('rex', project_type)))
+        rex_sentences = adm.read_project_sentences(Path('data/clean/project-{}/{}'.format('rex', project_type)))
         rex_labeled_sentences = label_token_sentences(rex_sentences, normalize_rex)
         project_sentences[project_type] = rex_labeled_sentences
 

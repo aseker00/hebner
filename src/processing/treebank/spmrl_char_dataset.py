@@ -10,14 +10,16 @@ from src.processing.treebank.spmrl_xfmr_dataset import extract_token
 from src.processing import processing_conllu as conllu
 
 
-norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
-norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+# norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+# norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
+norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
 
 
 def normalize(label: str, norm_labels: dict) -> str:
-    if label == 'O' or label[2:] not in norm_labels:
-        return 'O'
-    norm_label = norm_labels[label[2:]]
+    norm_label = norm_labels.get(label[2:], 'O')
+    if norm_label == 'O':
+        return norm_label
     norm_prefix = 'B' if label[0] == 'B' or label[0] == 'S' else 'I'
     return norm_prefix + '-' + norm_label
 
@@ -186,8 +188,9 @@ def label_char_sentences(lattice_sentences: list, norm_labels: dict) -> list:
 
 
 def main(model_type: str = 'xlm'):
-    lattice_sentences = conllu.read_conllu(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
-    norm_labels = norm_labels_gpe_org
+    gpe_label = 'ORG'
+    lattice_sentences = conllu.read_conllu_sentences(Path('data/clean/treebank/spmrl-07.conllu'), 'spmrl')
+    norm_labels = norm_labels_gpe_loc if gpe_label == 'LOC' else norm_labels_gpe_org
     char_labeled_sentences = label_char_sentences(lattice_sentences, norm_labels)
     sent_tokens = [sent.text[token_offset[0]:token_offset[1]] for sent in char_labeled_sentences for token_offset in
                    sent.token_offsets]
@@ -206,10 +209,10 @@ def main(model_type: str = 'xlm'):
     char2id = {k: v for k, v in sorted(char2id.items(), key=lambda item: item[1])}
     ner_model = CharXfmrNerModel(x_model, ft_model, char2id)
     char_df = process_char_labeled_sentences(char_labeled_sentences, ner_model)
-    dataset_name = '{}-{}-{}-{}'.format('spmrl', 'char', model_type, 'gpe-loc' if norm_labels == norm_labels_gpe_loc else 'gpe-org')
+    dataset_name = '{}-{}-{}-{}'.format('spmrl', 'char', model_type, 'gpe-loc' if gpe_label == 'LOC' else 'gpe-org')
     data_file_path = Path('data/processed/{}.csv'.format(dataset_name))
     save_processed_dataset(char_df, data_file_path)
-    token_dataset_name = '{}-{}-{}'.format('spmrl', model_type, 'gpe-loc' if norm_labels == norm_labels_gpe_loc else 'gpe-org')
+    token_dataset_name = '{}-{}-{}'.format('spmrl', model_type, 'gpe-loc' if gpe_label == 'LOC' else 'gpe-org')
     token_data_file_path = Path('data/processed/{}.csv'.format(token_dataset_name))
     token_df = load_processed_dataset(token_data_file_path)
     sample_file_path = Path('data/processed/{}.pkl'.format(dataset_name))
