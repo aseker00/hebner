@@ -4,7 +4,7 @@ from src.modeling.modeling_xfmr import *
 
 class CharXfmrNerModel(nn.Module):
 
-    def __init__(self, x_model: XfmrNerModel, ft_model: _FastText, char2id: dict, char_dropout_prob: float = 0.5):
+    def __init__(self, x_model: XfmrNerModel, ft_model: _FastText, char2id: dict, char_dropout_prob: float = 0.0):
         super(CharXfmrNerModel, self).__init__()
         self.x_model = x_model
         self.ft_model = ft_model

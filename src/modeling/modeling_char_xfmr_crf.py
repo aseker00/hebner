@@ -44,8 +44,7 @@ class CharXfmrCrfNerModel(CharXfmrNerModel):
         x_token_sequence_output = x_token_outputs[0]
         x_token_sequence_output = self.x_model.dropout(x_token_sequence_output)
         embedded_chars = self.char_emb(char_input_ids)
-        if self.char_dropout > 0.0:
-            embedded_chars = self.char_dropout(embedded_chars)
+        embedded_chars = self.char_dropout(embedded_chars)
         sequence_outputs = []
         for sent_idx in range(x_token_sequence_output.size(0)):
             sent_token_output = x_token_sequence_output[sent_idx]

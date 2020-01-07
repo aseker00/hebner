@@ -12,7 +12,7 @@ labels = ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-PER', 'I-LOC', 'I-ORG']
 class XfmrNerModel(nn.Module):
 
     def __init__(self, name: str, tokenizer: PreTrainedTokenizer, model: PreTrainedModel,
-                 classifier_input_feat_num: int = None, dropout_prob: float = 0.5):
+                 classifier_input_feat_num: int = None, dropout_prob: float = 0.0):
         super(XfmrNerModel, self).__init__()
         self.name = name
         self.model = model
