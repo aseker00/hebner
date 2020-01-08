@@ -1,9 +1,9 @@
 from pathlib import Path
 from transformers import XLMTokenizer, XLMModel, BertTokenizer, BertModel
-from src.modeling.modeling_xfmr import XfmrNerModel
+from src.modeling.modeling_token_xfmr import XfmrNerModel
 from src.processing import processing_adm as adm
 from src.processing.processing_utils import process_rex_labeled_sentences, save_processed_dataset
-from src.processing.project.project_xfmr_dataset import label_token_sentences, normalize_rex
+from src.processing.project.project_token_xfmr_dataset import label_token_sentences
 
 
 def main(model_type: str = 'xlm'):

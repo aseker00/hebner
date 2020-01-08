@@ -68,7 +68,7 @@ def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: Xf
         decoded_token_pred.extend(pred_token_labeled_sentences)
         batch_size = batch[0].size(0)
         print_token_loss += batch_loss.item() / batch_size
-        total_token_loss += batch_loss.item()/batch_size
+        total_token_loss += batch_loss.item() / batch_size
         if step % print_every == 0:
             print('epoch: {}, {}: {}({}) token loss: {}'.format(epoch, phase, step, len(decoded_token_pred),
                                                                 print_token_loss/print_every))

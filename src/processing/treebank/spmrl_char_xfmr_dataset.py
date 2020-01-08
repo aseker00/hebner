@@ -1,31 +1,8 @@
 from src.processing.processing_utils import CharLabeledSentence, normalize_spmrl
-from src.processing.treebank.spmrl_token_xfmr_dataset import extract_token
-
-# norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
-# norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
-# # norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
-# # norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
-#
-#
-# def normalize(label: str, norm_labels: dict) -> str:
-#     norm_label = norm_labels.get(label[2:], 'O')
-#     if norm_label == 'O':
-#         return norm_label
-#     norm_prefix = 'B' if label[0] == 'B' or label[0] == 'S' else 'I'
-#     return norm_prefix + '-' + norm_label
+from src.processing.treebank.spmrl_token_xfmr_dataset import extract_token, extract_token_label
 
 
-def extract_tokenized_label(token_node: list) -> str:
-    labels = [node['misc']['biose'] for node in token_node]
-    if len(labels) > 1:
-        try:
-            labels.remove('O')
-        except ValueError:
-            return labels[0]
-    return labels[0]
-
-
-def extract_segmented_labels(token_node: list) -> list:
+def extract_segment_labels(token_node: list) -> list:
     return [node['misc']['biose'] for node in token_node]
 
 
@@ -124,7 +101,7 @@ def extract_segment_offsets(sentence: dict) -> list:
 def extract_tokenized_label_offsets(sentence: dict, norm_labels: dict) -> list:
     offsets = []
     token_nodes = sentence['token_nodes']
-    token_labels = [extract_tokenized_label(token_node) for token_node in token_nodes]
+    token_labels = [extract_token_label(token_node) for token_node in token_nodes]
     token_labels = [normalize_spmrl(label, norm_labels) for label in token_labels]
     token_offsets = extract_token_offsets(sentence)
     for token_label, (start_offset, end_offset, token) in zip(token_labels, sorted(token_offsets)):
@@ -135,7 +112,7 @@ def extract_tokenized_label_offsets(sentence: dict, norm_labels: dict) -> list:
 def extract_segmented_label_offsets(sentence: dict, norm_labels: dict) -> list:
     offsets = []
     token_nodes = sentence['token_nodes']
-    seg_labels = [seg_label for token_node in token_nodes for seg_label in extract_segmented_labels(token_node)]
+    seg_labels = [seg_label for token_node in token_nodes for seg_label in extract_segment_labels(token_node)]
     seg_labels = [normalize_spmrl(label, norm_labels) for label in seg_labels]
     seg_offsets = extract_segment_offsets(sentence)
     for seg_label, (start_offset, end_offset, seg) in zip(seg_labels, seg_offsets):

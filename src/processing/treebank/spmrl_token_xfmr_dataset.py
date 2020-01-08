@@ -1,31 +1,6 @@
 from src.processing.processing_utils import TokenLabeledSentence, normalize_spmrl
 
 
-# # PER - person
-# # ORG - organization
-# # LOC - location
-# # GPE - geo-political
-# # EVE - event
-# # DUC - product
-# # FAC - artifact
-# # ANG - language
-# # WOA - work of art
-# def normalize(label: str, gpe_label: str) -> str:
-#     # if label[2:] in ['EVE', 'DUC', 'ANG', 'WOA']:
-#     if label[2:] in ['EVE', 'ANG']:
-#         return 'O'
-#     if label[2:] == 'GPE':
-#         return label[:2] + gpe_label
-#         # return label[:2] + 'ORG'
-#     if label[2:] == 'DUC':
-#         return label[:2] + 'ORG'
-#     if label[2:] == 'WOA':
-#         return label[:2] + 'ORG'
-#     if label[2:] == 'FAC':
-#         return label[:2] + 'LOC'
-#     return label
-
-
 def extract_sent_id(sentence: dict) -> int:
     return int(sentence['id'])
 
@@ -57,16 +32,13 @@ def extract_token_offsets(sentence: dict) -> dict:
 
 
 def extract_token_label(token_node: list) -> str:
-    label = 'O'
-    for node in token_node:
-        if node['misc']['biose'] != label:
-            if node['misc']['biose'][0] == 'E':
-                label = 'I' + node['misc']['biose'][1:]
-            elif node['misc']['biose'][0] == 'S':
-                label = 'B' + node['misc']['biose'][1:]
-            elif label[0] != 'B':
-                label = node['misc']['biose']
-    return label
+    labels = [node['misc']['biose'] for node in token_node]
+    if len(labels) > 1:
+        try:
+            labels.remove('O')
+        except ValueError:
+            return labels[0]
+    return labels[0]
 
 
 def label_token_sentence(sentence: dict, norm_labels: dict) -> TokenLabeledSentence:
@@ -74,8 +46,10 @@ def label_token_sentence(sentence: dict, norm_labels: dict) -> TokenLabeledSente
     text = extract_text(sentence)
     token_nodes = sentence['token_nodes']
     token_offsets = extract_token_offsets(sentence)
-    labels = [normalize_spmrl(extract_token_label(token_node), norm_labels) for token_node in token_nodes]
-    return TokenLabeledSentence(sent_id, text, token_offsets, labels)
+    token_labels = [extract_token_label(token_node) for token_node in token_nodes]
+    token_labels = [normalize_spmrl(label, norm_labels) for label in token_labels]
+    # labels = [normalize_spmrl(extract_token_label(token_node), norm_labels) for token_node in token_nodes]
+    return TokenLabeledSentence(sent_id, text, token_offsets, token_labels)
 
 
 def label_token_sentences(lattice_sentences: list, norm_labels: dict) -> list:

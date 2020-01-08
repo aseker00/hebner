@@ -27,14 +27,14 @@ class XfmrCrfNerModel(XfmrNerModel):
         with torch.no_grad():
             sos_nil_transitions = [self.label2id[label] for label in self.labels if label not in transition_matrix['SOS']]
             for label_id in sos_nil_transitions:
-                self.crf.start_transitions[label_id] = -10000
+                self.crf.start_transitions[label_id] = -100000
             for from_label in transition_matrix:
                 if from_label == 'SOS':
                     continue
                 from_label_id = self.label2id[from_label]
                 from_nil_transitions = [self.label2id[label] for label in self.labels if label not in transition_matrix[from_label]]
                 for label_id in from_nil_transitions:
-                    self.crf.transitions[from_label_id, label_id] = -10000
+                    self.crf.transitions[from_label_id, label_id] = -100000
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.ByteTensor, label_ids: torch.Tensor = None):
         outputs = self.model(input_ids, attention_mask=attention_mask)
