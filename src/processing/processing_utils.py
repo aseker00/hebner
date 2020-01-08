@@ -2,8 +2,41 @@ import pickle
 from collections import defaultdict
 from pathlib import Path
 import pandas as pd
-from src.modeling.modeling_xfmr import XfmrNerModel
+from src.modeling.modeling_token_xfmr import XfmrNerModel
 from src.modeling.modeling_char_xfmr import CharXfmrNerModel
+
+
+spmrl_norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
+spmrl_norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
+# norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+# norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
+
+# PER - person
+# ORG - organization
+# LOC - location
+# GPE - geo-political
+# EVE - event
+# DUC - product
+# FAC - artifact
+# ANG - language
+# WOA - work of art
+def normalize_spmrl(label: str, norm_labels: dict) -> str:
+    norm_label = norm_labels.get(label[2:], 'O')
+    if norm_label == 'O':
+        return norm_label
+    norm_prefix = 'B' if label[0] == 'B' or label[0] == 'S' else 'I'
+    return norm_prefix + '-' + norm_label
+
+
+# PER - person
+# ORG - organization
+# LOC - location
+# MISC - miscellaneous
+# TTL - title
+def normalize_project(label: str) -> str:
+    if label in ['MISC', 'TTL']:
+        return 'O'
+    return label
 
 
 def save_processed_dataset(dataset: pd.DataFrame, dataset_file_path: Path):
@@ -14,13 +47,12 @@ def load_processed_dataset(dataset_file_path: Path) -> pd.DataFrame:
     return pd.read_csv(str(dataset_file_path))
 
 
-def save_model_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, x_model: XfmrNerModel):
+def save_model_token_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, x_model: XfmrNerModel):
     labeled_sentences = {sent.sent_id: sent for sent in labeled_sentences}
     token_gb = token_df.groupby('sent_idx')
     token_groups = {i: token_gb.get_group(i) for i in token_gb.groups}
     max_token_seq_len = max([len(token_groups[i].index) for i in token_groups])
-    data_samples = [x_model.to_sample(i, labeled_sentences[i].text, token_groups[i], max_token_seq_len) for i in
-                    token_groups]
+    data_samples = [x_model.to_sample(i, labeled_sentences[i].text, token_groups[i], max_token_seq_len) for i in token_groups]
     with open(str(dataset_file_path), 'wb') as f:
         pickle.dump(data_samples, file=f, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -30,7 +62,7 @@ def load_model_data_samples(dataset_file_path: Path) -> list:
         return pickle.load(f)
 
 
-def save_char_model_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, char_df: pd.DataFrame, cx_model: CharXfmrNerModel):
+def save_model_char_data_samples(dataset_file_path: Path, labeled_sentences: list, token_df: pd.DataFrame, char_df: pd.DataFrame, cx_model: CharXfmrNerModel):
     # merged_df = pd.merge(token_df, char_df, on=['sent_idx', 'token_idx'])
     labeled_sentences = {sent.sent_id: sent for sent in labeled_sentences}
     token_gb = token_df.groupby('sent_idx')
@@ -39,14 +71,9 @@ def save_char_model_data_samples(dataset_file_path: Path, labeled_sentences: lis
     char_groups = {i: char_gb.get_group(i) for i in char_gb.groups}
     # max_token_seq_len = max([len(token_groups[i].index) for i in token_groups])
     max_char_seq_len = max([len(char_groups[i].index) for i in char_groups])
-    data_samples = [cx_model.to_sample(i, labeled_sentences[i].text, token_groups[i], char_groups[i], max_char_seq_len)
-                    for i in token_groups]
+    data_samples = [cx_model.to_sample(i, labeled_sentences[i].text, token_groups[i], char_groups[i], max_char_seq_len) for i in token_groups]
     with open(str(dataset_file_path), 'wb') as f:
         pickle.dump(data_samples, file=f, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_char_model_data_samples(dataset_file_path: Path) -> list:
-    return load_model_data_samples(dataset_file_path)
 
 
 def is_english(s):
@@ -196,7 +223,7 @@ class CharLabeledSentence:
         return annotations
 
 
-def process_xfmr_labeled_sentences(labeled_sentences: list, x_model: XfmrNerModel) -> pd.DataFrame:
+def process_token_labeled_sentences(labeled_sentences: list, x_model: XfmrNerModel) -> pd.DataFrame:
     sent_data = defaultdict(list)
     for sent in labeled_sentences:
         sent.token_offsets.insert(0, (-1, 0))
@@ -234,3 +261,25 @@ def process_rex_labeled_sentences(labeled_sentences: list, x_model: XfmrNerModel
             for k in data_row:
                 sent_data[k].extend(data_row[k])
     return pd.DataFrame(sent_data)
+
+
+def get_chars_from_processed_data(data_files: list) -> list:
+    char_ids = {}
+    for data_file in data_files:
+        df = load_processed_dataset(data_file)
+        df_char_ids = {a[1]: a[0] for a in df[['char', 'char_id']].to_numpy()}
+        char_ids.update(df_char_ids)
+    return [char_ids[char_id] for char_id in sorted(char_ids)]
+    # [train_data_file_path, valid_data_file_path, test_data_file_path] = data_files
+    # train_df = load_processed_dataset(train_data_file_path)
+    # train_chars = {a for a in train_df[['char']].to_numpy()}
+    # # train_char2id = {a[0]: a[1] for a in train_df[['char', 'char_id']].to_numpy()}
+    # valid_df = load_processed_dataset(valid_data_file_path)
+    # valid_chars = {a for a in valid_df[['char']].to_numpy()}
+    # # valid_char2id = {a[0]: a[1] for a in valid_df[['char', 'char_id']].to_numpy()}
+    # test_df = load_processed_dataset(test_data_file_path)
+    # test_chars = {a for a in test_df[['char']].to_numpy()}
+    # # test_char2id = {a[0]: a[1] for a in test_df[['char', 'char_id']].to_numpy()}
+    # return train_chars.union(valid_chars, test_chars)
+    # # char2id = dict(dict(test_char2id, **valid_char2id), **train_char2id)
+    # # return set(char2id.keys())

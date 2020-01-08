@@ -1,19 +1,19 @@
 from fasttext.FastText import _FastText
 from src.modeling.modeling_char_xfmr import CharXfmrNerModel
-from src.modeling.modeling_xfmr import XfmrNerModel
+from src.modeling.modeling_token_xfmr import XfmrNerModel
 from torchcrf import CRF
 import torch
 
 
 transition_matrix = {
-    'SOS': ['O', 'B-PER', 'B-LOC', 'B-ORG'],
-    'O': ['O', 'B-PER', 'B-LOC', 'B-ORG'],
+    'SOS': ['B-PER', 'B-LOC', 'B-ORG', 'O'],
+    'O': ['B-PER', 'B-LOC', 'B-ORG', 'O'],
     'B-PER': ['I-PER'],
     'B-LOC': ['I-LOC'],
     'B-ORG': ['I-ORG'],
-    'I-PER': ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-PER'],
-    'I-LOC': ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-LOC'],
-    'I-ORG': ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-ORG'],
+    'I-PER': ['B-PER', 'B-LOC', 'B-ORG', 'I-PER', 'O'],
+    'I-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'I-LOC', 'O'],
+    'I-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'I-ORG', 'O'],
 }
 
 

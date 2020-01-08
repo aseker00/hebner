@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.nn import CrossEntropyLoss
 import pandas as pd
 import numpy as np
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -12,7 +11,7 @@ labels = ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-PER', 'I-LOC', 'I-ORG']
 class XfmrNerModel(nn.Module):
 
     def __init__(self, name: str, tokenizer: PreTrainedTokenizer, model: PreTrainedModel,
-                 classifier_input_feat_num: int = None, dropout_prob: float = 0.0):
+                 dropout_prob: float = 0.0, classifier_input_feat_num: int = None):
         super(XfmrNerModel, self).__init__()
         self.name = name
         self.model = model
@@ -55,7 +54,7 @@ class XfmrNerModel(nn.Module):
         logits = self.classifier(sequence_output)
         outputs = logits.argmax(dim=2).detach()
         if label_ids is not None:
-            loss_fct = CrossEntropyLoss()
+            loss_fct = nn.CrossEntropyLoss()
             if attention_mask is not None:
                 active_loss = attention_mask.view(-1) == 1
                 active_logits = logits.view(-1, self.num_labels)[active_loss]

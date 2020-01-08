@@ -77,11 +77,11 @@ def run_char(epoch, phase, device, data: DataLoader, samples: dict, cx_model: Ch
             print('epoch: {}, {}: {}({}) char loss: {}'.format(epoch, phase, step, len(decoded_char_pred),
                                                                print_char_loss/print_every))
             print_sample(epoch, phase, step, print_char_gold[-1], print_char_pred[-1])
-            print_metrics(epoch, phase, step, print_char_gold, print_char_pred, cx_model)
+            print_metrics(epoch, phase, step, print_char_gold, print_char_pred, cx_model.labels[1:])
             print_char_loss = 0
             print_char_gold, print_char_pred = [], []
     print('epoch: {}, {}: {}({}) char loss: {}'.format(epoch, phase, 'total', len(decoded_char_pred),
                                                        total_char_loss/len(data)))
     print_sample(epoch, phase, 'total', decoded_char_gold[-1], decoded_char_pred[-1])
-    print_metrics(epoch, phase, 'total', decoded_char_gold, decoded_char_pred, cx_model)
+    print_metrics(epoch, phase, 'total', decoded_char_gold, decoded_char_pred, cx_model.labels[1:])
     return decoded_char_gold, decoded_char_pred, total_char_loss

@@ -1,5 +1,9 @@
 from fasttext.FastText import _FastText
-from src.modeling.modeling_xfmr import *
+import torch
+import torch.nn as nn
+import numpy as np
+import pandas as pd
+from src.modeling.modeling_token_xfmr import XfmrNerModel
 
 
 class CharXfmrNerModel(nn.Module):
@@ -71,7 +75,7 @@ class CharXfmrNerModel(nn.Module):
         logits = self.x_model.classifier(sequence_outputs)
         outputs = logits.argmax(dim=2).detach()
         if char_label_ids is not None:
-            loss_fct = CrossEntropyLoss()
+            loss_fct = nn.CrossEntropyLoss()
             if char_attention_mask is not None:
                 active_loss = char_attention_mask.view(-1) == 1
                 active_logits = logits.view(-1, self.num_labels)[active_loss]

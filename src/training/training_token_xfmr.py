@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from src.modeling.modeling_xfmr import XfmrNerModel
+from src.modeling.modeling_token_xfmr import XfmrNerModel
 from src.processing.processing_utils import TokenLabeledSentence
 from src.training.training_utils import print_sample, print_metrics, ModelOptimizer
 
@@ -73,11 +73,11 @@ def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: Xf
             print('epoch: {}, {}: {}({}) token loss: {}'.format(epoch, phase, step, len(decoded_token_pred),
                                                                 print_token_loss/print_every))
             print_sample(epoch, phase, step, print_token_gold[-1], print_token_pred[-1])
-            print_metrics(epoch, phase, step, print_token_gold, print_token_pred, x_model)
+            print_metrics(epoch, phase, step, print_token_gold, print_token_pred, x_model.labels[1:])
             print_token_loss = 0
             print_token_gold, print_token_pred = [], []
     print('epoch: {}, {}: {}({}) token loss: {}'.format(epoch, phase, 'total', len(decoded_token_pred),
                                                         total_token_loss/len(data)))
     print_sample(epoch, phase, 'total', decoded_token_gold[-1], decoded_token_pred[-1])
-    print_metrics(epoch, phase, 'total', decoded_token_gold, decoded_token_pred, x_model)
+    print_metrics(epoch, phase, 'total', decoded_token_gold, decoded_token_pred, x_model.labels[1:])
     return decoded_token_gold, decoded_token_pred, total_token_loss
