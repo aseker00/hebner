@@ -34,10 +34,13 @@ def extract_token_offsets(sentence: dict) -> dict:
 def extract_token_label(token_node: list) -> str:
     labels = [node['misc']['biose'] for node in token_node]
     if len(labels) > 1:
-        try:
-            labels.remove('O')
-        except ValueError:
-            return labels[0]
+        labels = [label for label in labels if label != 'O']
+        if not labels:
+            return 'O'
+        # try:
+        #     labels.remove('O')
+        # except ValueError:
+        #     return labels[0]
     return labels[0]
 
 

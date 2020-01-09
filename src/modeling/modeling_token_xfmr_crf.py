@@ -55,4 +55,4 @@ class XfmrCrfNerModel(XfmrNerModel):
             log_likelihood = self.crf(emissions=masked_logits, tags=masked_labels, mask=masked_attention_mask, reduction='mean')
             loss = -log_likelihood
             return loss, masked_attention_mask, masked_labels, decoded_labels
-        return masked_labels, decoded_labels
+        return masked_attention_mask, masked_labels, decoded_labels
