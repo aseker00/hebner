@@ -15,7 +15,8 @@ class CharXfmrNerModel(nn.Module):
         self.ft_model = ft_model
         self.char2id = char2id
         self.char_vectors = torch.tensor([ft_model.get_word_vector(c) for c in char2id], dtype=torch.float)
-        self.char_emb = nn.Embedding.from_pretrained(self.char_vectors, freeze=False, padding_idx=0)
+        # self.char_emb = nn.Embedding.from_pretrained(self.char_vectors, freeze=False, padding_idx=0)
+        self.char_emb = nn.Embedding.from_pretrained(self.char_vectors, freeze=False)
         self.char_dropout = nn.Dropout(char_dropout_prob)
 
     @property

@@ -17,8 +17,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 def main():
     gpe_label = 'gpe-loc'
     xfmr_model_type = 'xlm'
-    ner_model_type = 'token'
-    classifier_type = ''
+    ner_model_type = 'char'
+    classifier_type = 'crf'
     train_dataset_name = '{}-{}-{}-{}'.format('spmrl', ner_model_type, xfmr_model_type, gpe_label)
     train_sample_file_path = Path('data/processed/{}.pkl'.format(train_dataset_name))
     valid_dataset_name = '{}-{}-{}'.format('news', ner_model_type, xfmr_model_type)
@@ -49,9 +49,11 @@ def main():
         train_samples = load_model_data_samples(train_sample_file_path)
         num_training_steps = len(train_samples) / train_batch_size
         num_warmup_steps = num_training_steps / 10
-        optimizer = AdamW(ner_model.parameters(), lr=lr)
+        # parameters = list(ner_model.classifier.parameters()) + list(ner_model.crf.parameters())
+        parameters = ner_model.parameters()
+        optimizer = AdamW(parameters, lr=lr)
         scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps, num_training_steps=num_training_steps)
-        ner_model_optimizer = ModelOptimizer(optimizer, scheduler, ner_model.parameters(), max_grad_norm)
+        ner_model_optimizer = ModelOptimizer(optimizer, scheduler, parameters, max_grad_norm)
         if ner_model_type == 'char':
             train_dataset, train_samples = to_char_dataset(train_samples)
             train_sampler = RandomSampler(train_dataset)

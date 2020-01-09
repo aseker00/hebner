@@ -16,8 +16,7 @@ def to_token_dataset(samples: list) -> (TensorDataset, dict):
     return token_dataset, id2sample
 
 
-def run_token_step(device, batch: tuple, x_model: XfmrNerModel,
-                   model_optimizer: ModelOptimizer) -> (torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor):
+def run_token_step(device, batch: tuple, x_model: XfmrNerModel, model_optimizer: ModelOptimizer) -> (torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor):
     batch = tuple(t.to(device) for t in batch)
     loss, valid_token_mask, valid_gold_token_labels, valid_pred_token_labels = x_model(*batch)
     if model_optimizer is not None:
@@ -42,9 +41,7 @@ def decode_token_batch(batch: list, samples: dict, x_model: XfmrNerModel) -> (li
         # sent_pred_ids = sent_pred_ids[sent_token_idx == 1][1:-1]
         # tokens = data_sample['tokens'][1:-1]
         sent_text = sent_data_sample['text']
-        sent_token_offsets = {start_offset: end_offset for start_offset, end_offset in
-                              zip(sent_data_sample['token_start_offsets'][1:-1],
-                                  sent_data_sample['token_end_offsets'][1:-1])}
+        sent_token_offsets = {start_offset: end_offset for start_offset, end_offset in zip(sent_data_sample['token_start_offsets'][1:-1], sent_data_sample['token_end_offsets'][1:-1])}
         sent_gold_labels = [x_model.labels[label_id] for label_id in sent_gold_ids]
         sent_pred_labels = [x_model.labels[label_id] for label_id in sent_pred_ids]
         gold_labeled_sent = TokenLabeledSentence(sent_id, sent_text, sent_token_offsets, sent_gold_labels)
@@ -54,8 +51,7 @@ def decode_token_batch(batch: list, samples: dict, x_model: XfmrNerModel) -> (li
     return gold_token_labeled_sentences, pred_token_labeled_sentences
 
 
-def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: XfmrNerModel, print_every,
-              model_optimizer=None) -> (list, list, float):
+def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: XfmrNerModel, print_every, model_optimizer=None) -> (list, list, float):
     print_token_loss, total_token_loss = 0, 0
     print_token_gold, print_token_pred, decoded_token_gold, decoded_token_pred = [], [], [], []
     for i, batch in enumerate(data):

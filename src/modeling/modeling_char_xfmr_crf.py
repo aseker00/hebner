@@ -1,4 +1,6 @@
 from fasttext.FastText import _FastText
+from torch.nn.utils.rnn import pad_sequence
+
 from src.modeling.modeling_char_xfmr import CharXfmrNerModel
 from src.modeling.modeling_token_xfmr import XfmrNerModel
 from torchcrf import CRF
@@ -39,27 +41,30 @@ class CharXfmrCrfNerModel(CharXfmrNerModel):
 
     def forward(self, token_input_ids: torch.Tensor, token_attention_mask: torch.Tensor, char_token_idx: torch.Tensor,
                 char_input_ids: torch.Tensor, char_attention_mask: torch.Tensor, char_label_ids: torch.Tensor = None):
-        x_token_outputs = self.x_model.model(token_input_ids[:, :self.max_seq_len], attention_mask=token_attention_mask[:, :self.max_seq_len])
-        x_token_sequence_output = x_token_outputs[0]
-        x_token_sequence_output = self.x_model.dropout(x_token_sequence_output)
+        outputs = self.x_model.model(token_input_ids[:, :self.max_seq_len], attention_mask=token_attention_mask[:, :self.max_seq_len])
+        sequence_output = outputs[0]
+        sequence_output = self.x_model.dropout(sequence_output)
         embedded_chars = self.char_emb(char_input_ids)
         embedded_chars = self.char_dropout(embedded_chars)
-        sequence_outputs = []
-        for sent_idx in range(x_token_sequence_output.size(0)):
-            sent_token_output = x_token_sequence_output[sent_idx]
+        char_sequences = []
+        for sent_idx in range(sequence_output.size(0)):
+            sent_sequence_output = sequence_output[sent_idx]
             sent_char_token_idx = char_token_idx[sent_idx]
             sent_embedded_chars = embedded_chars[sent_idx]
-            sent_x_token_outputs = []
-            for token_idx in sent_char_token_idx:
-                x_token_output = sent_token_output[token_idx]
-                sent_x_token_outputs.append(x_token_output)
-            sent_sequence = torch.cat([torch.stack(sent_x_token_outputs, dim=0), sent_embedded_chars], dim=1)
-            sequence_outputs.append(sent_sequence)
-        sequence_outputs = torch.stack(sequence_outputs, dim=0)
-        logits = self.classifier(sequence_outputs)
-        decoded_labels = torch.tensor(self.crf.decode(emissions=logits), dtype=torch.long)
+            sent_token_outputs = [sent_sequence_output[token_idx] for token_idx in sent_char_token_idx]
+            sent_sequence = torch.cat([torch.stack(sent_token_outputs, dim=0), sent_embedded_chars], dim=1)
+            char_sequences.append(sent_sequence)
+        char_sequences = torch.stack(char_sequences, dim=0)
+        logits = self.classifier(char_sequences)
+        valid_logits = [logits[i, char_attention_mask[i] == 1][1:-1] for i in range(logits.size(0))]
+        valid_logits = pad_sequence(valid_logits, batch_first=True, padding_value=0)
+        valid_labels = [char_label_ids[i, char_attention_mask[i] == 1][1:-1] for i in range(char_label_ids.size(0))]
+        valid_labels = pad_sequence(valid_labels, batch_first=True, padding_value=0)
+        valid_attention_mask = [char_attention_mask[i, char_attention_mask[i] == 1][1:-1] for i in range(char_attention_mask.size(0))]
+        valid_attention_mask = pad_sequence(valid_attention_mask, batch_first=True, padding_value=0)
+        valid_decoded_labels = torch.tensor(self.crf.decode(emissions=valid_logits), dtype=torch.long)
         if char_label_ids is not None:
-            log_likelihood = self.crf(emissions=logits, tags=char_label_ids, mask=char_attention_mask, reduction='mean')
+            log_likelihood = self.crf(emissions=valid_logits, tags=valid_labels, mask=valid_attention_mask, reduction='mean')
             loss = -log_likelihood
-            return loss, decoded_labels
-        return decoded_labels
+            return loss, valid_attention_mask, valid_labels, valid_decoded_labels
+        return valid_attention_mask, valid_labels, valid_decoded_labels
