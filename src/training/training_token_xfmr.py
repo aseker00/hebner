@@ -17,28 +17,29 @@ def to_token_dataset(samples: list) -> (TensorDataset, dict):
 
 
 def run_token_step(device, batch: tuple, x_model: XfmrNerModel,
-                   model_optimizer: ModelOptimizer) -> (torch.Tensor, torch.Tensor):
+                   model_optimizer: ModelOptimizer) -> (torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor):
     batch = tuple(t.to(device) for t in batch)
-    loss, pred_token_labels = x_model(*batch)
+    loss, token_mask, gold_token_labels, pred_token_labels = x_model(*batch)
     if model_optimizer is not None:
         loss.backward()
         model_optimizer.step()
-    return loss, pred_token_labels.cpu()
+    return loss, token_mask.cpu(), gold_token_labels.cpu(), pred_token_labels.cpu()
 
 
 def decode_token_batch(batch: list, samples: dict, x_model: XfmrNerModel) -> (list, list):
-    sent_ids, token_idx, token_input_ids, token_attention_mask, token_label_ids, token_prediction_ids = batch
+    # sent_ids, token_idx, token_input_ids, token_attention_mask, token_label_ids, token_mask, token_gold_ids, token_prediction_ids = batch
+    sent_ids, _, _, _, _, token_mask, token_gold_ids, token_prediction_ids = batch
     gold_token_labeled_sentences = []
     pred_token_labeled_sentences = []
-    for i in range(token_input_ids.size(0)):
+    for i in range(token_gold_ids.size(0)):
         sent_id = sent_ids[i]
         sent_data_sample = samples[sent_id.item()]
-        sent_attention_mask = token_attention_mask[i]
-        sent_gold_ids = token_label_ids[i][sent_attention_mask == 1]
+        sent_attention_mask = token_mask[i]
+        sent_gold_ids = token_gold_ids[i][sent_attention_mask == 1]
         sent_pred_ids = token_prediction_ids[i][sent_attention_mask == 1]
-        sent_token_idx = token_idx[i][sent_attention_mask == 1]
-        sent_gold_ids = sent_gold_ids[sent_token_idx == 1][1:-1]
-        sent_pred_ids = sent_pred_ids[sent_token_idx == 1][1:-1]
+        # sent_token_idx = token_idx[i][sent_attention_mask == 1]
+        # sent_gold_ids = sent_gold_ids[sent_token_idx == 1][1:-1]
+        # sent_pred_ids = sent_pred_ids[sent_token_idx == 1][1:-1]
         # tokens = data_sample['tokens'][1:-1]
         sent_text = sent_data_sample['text']
         sent_token_offsets = {start_offset: end_offset for start_offset, end_offset in
@@ -59,9 +60,8 @@ def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: Xf
     print_token_gold, print_token_pred, decoded_token_gold, decoded_token_pred = [], [], [], []
     for i, batch in enumerate(data):
         step = i + 1
-        batch_loss, batch_predictions = run_token_step(device, batch[2:], x_model, model_optimizer)
-        gold_token_labeled_sentences, pred_token_labeled_sentences = decode_token_batch(batch + [batch_predictions],
-                                                                                        samples, x_model)
+        batch_loss, batch_mask, batch_gold, batch_pred = run_token_step(device, batch[1:], x_model, model_optimizer)
+        gold_token_labeled_sentences, pred_token_labeled_sentences = decode_token_batch(batch + [batch_mask, batch_gold, batch_pred], samples, x_model)
         print_token_gold.extend(gold_token_labeled_sentences)
         print_token_pred.extend(pred_token_labeled_sentences)
         decoded_token_gold.extend(gold_token_labeled_sentences)

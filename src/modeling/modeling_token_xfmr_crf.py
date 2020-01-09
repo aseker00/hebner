@@ -1,4 +1,5 @@
 import torch
+from torch.nn.utils.rnn import pad_sequence
 from torchcrf import CRF
 from transformers import PreTrainedTokenizer, PreTrainedModel
 from src.modeling.modeling_token_xfmr import XfmrNerModel
@@ -36,14 +37,22 @@ class XfmrCrfNerModel(XfmrNerModel):
                 for label_id in from_nil_transitions:
                     self.crf.transitions[from_label_id, label_id] = -100000
 
-    def forward(self, input_ids: torch.Tensor, attention_mask: torch.ByteTensor, label_ids: torch.Tensor = None):
+    def forward(self, input_mask: torch.Tensor, input_ids: torch.Tensor, attention_mask: torch.ByteTensor, label_ids: torch.Tensor = None):
         outputs = self.model(input_ids, attention_mask=attention_mask)
         sequence_output = outputs[0]
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
-        decoded_labels = torch.tensor(self.crf.decode(emissions=logits), dtype=torch.long)
+        # masked_input = [input_ids[i, input_mask[i] == 1][1:-1] for i in range(input_ids.size(0))]
+        # masked_input = pad_sequence(masked_input, batch_first=True, padding_value=0)
+        masked_attention_mask = [attention_mask[i, input_mask[i] == 1][1:-1] for i in range(attention_mask.size(0))]
+        masked_attention_mask = pad_sequence(masked_attention_mask, batch_first=True, padding_value=0)
+        masked_labels = [label_ids[i, input_mask[i] == 1][1:-1] for i in range(label_ids.size(0))]
+        masked_labels = pad_sequence(masked_labels, batch_first=True, padding_value=0)
+        masked_logits = [logits[i, input_mask[i] == 1][1:-1] for i in range(logits.size(0))]
+        masked_logits = pad_sequence(masked_logits, batch_first=True, padding_value=0)
+        decoded_labels = torch.tensor(self.crf.decode(emissions=masked_logits), dtype=torch.long)
         if label_ids is not None:
-            log_likelihood = self.crf(emissions=logits, tags=label_ids, mask=attention_mask, reduction='mean')
+            log_likelihood = self.crf(emissions=masked_logits, tags=masked_labels, mask=masked_attention_mask, reduction='mean')
             loss = -log_likelihood
-            return loss, decoded_labels
-        return decoded_labels
+            return loss, masked_attention_mask, masked_labels, decoded_labels
+        return masked_labels, decoded_labels

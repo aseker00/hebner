@@ -47,12 +47,12 @@ class XfmrNerModel(nn.Module):
         return tokens, token_ids
 
 
-    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor, label_ids: torch.Tensor = None):
+    def forward(self, input_mask: torch.Tensor, input_ids: torch.Tensor, attention_mask: torch.Tensor, label_ids: torch.Tensor = None):
         outputs = self.model(input_ids, attention_mask=attention_mask)
         sequence_output = outputs[0]
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
-        outputs = logits.argmax(dim=2).detach()
+        outputs = logits.argmax(dim=2)
         if label_ids is not None:
             loss_fct = nn.CrossEntropyLoss()
             if attention_mask is not None:

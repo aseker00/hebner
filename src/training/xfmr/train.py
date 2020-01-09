@@ -41,7 +41,7 @@ def main():
     epochs = 3
     lr = 1e-5
     max_grad_norm = 1.0
-    train_batch_size = 8
+    train_batch_size = 2
     eval_batch_size = 8
     for i in range(epochs):
         ner_model.train()
