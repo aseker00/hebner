@@ -28,19 +28,18 @@ class CharXfmrCrfNerModel(CharXfmrNerModel):
         with torch.no_grad():
             sos_nil_transitions = [self.label2id[label] for label in self.labels if label not in transition_matrix['SOS']]
             for label_id in sos_nil_transitions:
-                self.crf.start_transitions[label_id] = -10000
+                self.crf.start_transitions[label_id] = -1000
             for from_label in transition_matrix:
                 if from_label == 'SOS':
                     continue
                 from_label_id = self.label2id[from_label]
                 from_nil_transitions = [self.label2id[label] for label in self.labels if label not in transition_matrix[from_label]]
                 for label_id in from_nil_transitions:
-                    self.crf.transitions[from_label_id, label_id] = -10000
+                    self.crf.transitions[from_label_id, label_id] = -1000
 
     def forward(self, token_input_ids: torch.Tensor, token_attention_mask: torch.Tensor, char_token_idx: torch.Tensor,
                 char_input_ids: torch.Tensor, char_attention_mask: torch.Tensor, char_label_ids: torch.Tensor = None):
-        x_token_outputs = self.x_model.model(token_input_ids[:, :self.max_seq_len],
-                                             attention_mask=token_attention_mask[:, :self.max_seq_len])
+        x_token_outputs = self.x_model.model(token_input_ids[:, :self.max_seq_len], attention_mask=token_attention_mask[:, :self.max_seq_len])
         x_token_sequence_output = x_token_outputs[0]
         x_token_sequence_output = self.x_model.dropout(x_token_sequence_output)
         embedded_chars = self.char_emb(char_input_ids)

@@ -18,7 +18,7 @@ def main():
     gpe_label = 'gpe-loc'
     xfmr_model_type = 'xlm'
     ner_model_type = 'token'
-    classifier_type = 'crf'
+    classifier_type = ''
     train_dataset_name = '{}-{}-{}-{}'.format('spmrl', ner_model_type, xfmr_model_type, gpe_label)
     train_sample_file_path = Path('data/processed/{}.pkl'.format(train_dataset_name))
     valid_dataset_name = '{}-{}-{}'.format('news', ner_model_type, xfmr_model_type)
@@ -41,7 +41,7 @@ def main():
     epochs = 3
     lr = 1e-5
     max_grad_norm = 1.0
-    train_batch_size = 2
+    train_batch_size = 8
     eval_batch_size = 8
     for i in range(epochs):
         ner_model.train()

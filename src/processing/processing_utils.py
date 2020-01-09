@@ -91,8 +91,7 @@ class TokenLabeledSentence:
     def __init__(self, sent_id: int, text: str, token_offsets: dict, labels: list):
         self.sent_id = sent_id
         self.text = text
-        self.token_offsets = [(token_start_offset, token_offsets[token_start_offset]) for token_start_offset in
-                              sorted(token_offsets)]
+        self.token_offsets = [(token_start_offset, token_offsets[token_start_offset]) for token_start_offset in sorted(token_offsets)]
         self.labels = labels
 
     @property
@@ -145,8 +144,7 @@ class TokenLabeledSentence:
                 if label[0] == 'I':
                     cur_end_offset = token_offset[1]
                 else:
-                    entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset),
-                                                                        'endOffset': int(cur_end_offset)}]}
+                    entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset), 'endOffset': int(cur_end_offset)}]}
                     entity_items.append(entity_item)
                     cur_label = label
                     if label[0] == 'B':
@@ -157,8 +155,7 @@ class TokenLabeledSentence:
                 if label[0] == 'B' or label[0] == 'I':
                     cur_start_offset = token_offset[0]
                     cur_end_offset = token_offset[1]
-        annotations = {'data': self.text, 'attributes': {'entities': {'type': 'list', 'itemType': 'entities',
-                                                                      'items': entity_items}}}
+        annotations = {'data': self.text, 'attributes': {'entities': {'type': 'list', 'itemType': 'entities', 'items': entity_items}}}
         return annotations
 
 
@@ -167,8 +164,7 @@ class CharLabeledSentence:
     def __init__(self, sent_id: int, text: str, token_offsets: dict, char_labels: list):
         self.sent_id = sent_id
         self.text = text
-        self.token_offsets = [(token_start_offset, token_offsets[token_start_offset]) for token_start_offset in
-                              sorted(token_offsets)]
+        self.token_offsets = [(token_start_offset, token_offsets[token_start_offset]) for token_start_offset in sorted(token_offsets)]
         self.labels = char_labels
 
     @property
@@ -196,8 +192,7 @@ class CharLabeledSentence:
                 'char_label_id': row_label_ids}
 
     def to_adm(self) -> dict:
-        label_offsets = [pos for token_offset in self.token_offsets for pos in list(range(token_offset[0],
-                                                                                          token_offset[1]))]
+        label_offsets = [pos for token_offset in self.token_offsets for pos in list(range(token_offset[0], token_offset[1]))]
         entity_items = []
         cur_label = 'O'
         cur_start_offset, cur_end_offset = 0, 0
@@ -205,8 +200,7 @@ class CharLabeledSentence:
         for label, label_offset in zip(self.labels, label_offsets):
             if label[0] == 'B':
                 if cur_label != 'O':
-                    entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset),
-                                                                        'endOffset': int(cur_end_offset)}]}
+                    entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset), 'endOffset': int(cur_end_offset)}]}
                     entity_items.append(entity_item)
                 cur_start_offset, cur_end_offset = label_offset, label_offset
             elif label[0] == 'I':
@@ -214,12 +208,10 @@ class CharLabeledSentence:
                 if cur_label == 'O':
                     cur_start_offset = label_offset
             elif cur_label != 'O':
-                entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset),
-                                                                    'endOffset': int(cur_end_offset)}]}
+                entity_item = {'type': cur_label[2:], 'mentions': [{'startOffset': int(cur_start_offset), 'endOffset': int(cur_end_offset)}]}
                 entity_items.append(entity_item)
             cur_label = label
-        annotations = {'data': self.text, 'attributes': {'entities': {'type': 'list', 'itemType': 'entities',
-                                                                      'items': entity_items}}}
+        annotations = {'data': self.text, 'attributes': {'entities': {'type': 'list', 'itemType': 'entities', 'items': entity_items}}}
         return annotations
 
 
@@ -270,16 +262,3 @@ def get_chars_from_processed_data(data_files: list) -> list:
         df_char_ids = {a[1]: a[0] for a in df[['char', 'char_id']].to_numpy()}
         char_ids.update(df_char_ids)
     return [char_ids[char_id] for char_id in sorted(char_ids)]
-    # [train_data_file_path, valid_data_file_path, test_data_file_path] = data_files
-    # train_df = load_processed_dataset(train_data_file_path)
-    # train_chars = {a for a in train_df[['char']].to_numpy()}
-    # # train_char2id = {a[0]: a[1] for a in train_df[['char', 'char_id']].to_numpy()}
-    # valid_df = load_processed_dataset(valid_data_file_path)
-    # valid_chars = {a for a in valid_df[['char']].to_numpy()}
-    # # valid_char2id = {a[0]: a[1] for a in valid_df[['char', 'char_id']].to_numpy()}
-    # test_df = load_processed_dataset(test_data_file_path)
-    # test_chars = {a for a in test_df[['char']].to_numpy()}
-    # # test_char2id = {a[0]: a[1] for a in test_df[['char', 'char_id']].to_numpy()}
-    # return train_chars.union(valid_chars, test_chars)
-    # # char2id = dict(dict(test_char2id, **valid_char2id), **train_char2id)
-    # # return set(char2id.keys())

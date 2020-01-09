@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import pandas as pd
 import numpy as np
+from torch.nn.utils.rnn import pad_sequence
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
 
@@ -47,23 +48,29 @@ class XfmrNerModel(nn.Module):
         return tokens, token_ids
 
 
-    def forward(self, input_mask: torch.Tensor, input_ids: torch.Tensor, attention_mask: torch.Tensor, label_ids: torch.Tensor = None):
+    def forward(self, valid_index: torch.Tensor, input_ids: torch.Tensor, attention_mask: torch.Tensor, label_ids: torch.Tensor = None):
         outputs = self.model(input_ids, attention_mask=attention_mask)
         sequence_output = outputs[0]
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
-        outputs = logits.argmax(dim=2)
+        valid_attention_mask = [attention_mask[i, valid_index[i] == 1][1:-1] for i in range(attention_mask.size(0))]
+        valid_attention_mask = pad_sequence(valid_attention_mask, batch_first=True, padding_value=0)
+        valid_labels = [label_ids[i, valid_index[i] == 1][1:-1] for i in range(label_ids.size(0))]
+        valid_labels = pad_sequence(valid_labels, batch_first=True, padding_value=0)
+        valid_logits = [logits[i, valid_index[i] == 1][1:-1] for i in range(logits.size(0))]
+        valid_logits = pad_sequence(valid_logits, batch_first=True, padding_value=0)
+        valid_outputs = valid_logits.argmax(dim=2)
         if label_ids is not None:
             loss_fct = nn.CrossEntropyLoss()
             if attention_mask is not None:
-                active_loss = attention_mask.view(-1) == 1
-                active_logits = logits.view(-1, self.num_labels)[active_loss]
-                active_labels = label_ids.view(-1)[active_loss]
+                active_loss = valid_attention_mask.view(-1) == 1
+                active_logits = valid_logits.view(-1, self.num_labels)[active_loss]
+                active_labels = valid_labels.view(-1)[active_loss]
                 loss = loss_fct(active_logits, active_labels)
             else:
-                loss = loss_fct(logits.view(-1, self.num_labels), label_ids.view(-1))
-            return loss, outputs
-        return outputs
+                loss = loss_fct(valid_logits.view(-1, self.num_labels), valid_labels.view(-1))
+            return loss, valid_attention_mask, valid_labels, valid_outputs
+        return valid_attention_mask, valid_labels, valid_outputs
 
     def to_sample(self, sent_idx: int, text: str, df: pd.DataFrame, max_token_seq_len: int) -> dict:
         sample = {'sent_idx': sent_idx, 'text': text}

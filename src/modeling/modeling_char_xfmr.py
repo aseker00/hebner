@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pandas as pd
+
 from src.modeling.modeling_token_xfmr import XfmrNerModel
 
 
@@ -73,7 +74,7 @@ class CharXfmrNerModel(nn.Module):
             sequence_outputs.append(sent_sequence)
         sequence_outputs = torch.stack(sequence_outputs, dim=0)
         logits = self.x_model.classifier(sequence_outputs)
-        outputs = logits.argmax(dim=2).detach()
+        outputs = logits.argmax(dim=2)
         if char_label_ids is not None:
             loss_fct = nn.CrossEntropyLoss()
             if char_attention_mask is not None:

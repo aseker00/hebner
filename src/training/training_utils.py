@@ -1,11 +1,12 @@
 import errno
+import json
 import os
 import subprocess
 import pandas as pd
 from seqeval.metrics import precision_score, recall_score, f1_score, accuracy_score
 from sklearn.metrics import classification_report
 from torch import nn
-# from src.training.score_utils import get_chunks, score_sequence
+from src.training.score_utils import get_chunks, score_sequence
 
 
 # model = HebNER("xl")
@@ -76,24 +77,13 @@ def print_metrics(epoch, phase, step, gold_sentences: list, pred_sentences: list
     print(report)
 
 
-# def print_muc_eval():
-#     # """
-#     #     Args:
-#     #         seq: [4, 4, 0, 0, ...] sequence of labels
-#     #         tag_lexicon: dict["O"] = 4
-#     #     Returns:
-#     #         list of (chunk_type, chunk_start, chunk_end)
-#     #     Example:
-#     #         seq = [4, 5, 0, 3]
-#     #         tags = {"B-PER": 4, "I-PER": 5, "B-LOC": 3}
-#     #         result = [("PER", 0, 2), ("LOC", 3, 4)]
-#     #     """
-#     scores = score_sequence(get_chunks(decoded_yl, tag2idx, inv_tag_lexicon=idx2tag),
-#                             get_chunks(decoded_yhl, tag2idx, inv_tag_lexicon=idx2tag), scores=scores)
-#     scores = None
-#     for gold_doc, pred_doc in zip(gold_docs, pred_docs):
-#         scores = score_sequence(get_chunks(gold_doc), get_chunks(pred_doc), scores=scores)
-#     scores.to_dict()
+def print_muc_eval(epoch, phase, step, gold_sentences: list, pred_sentences: list, label2id: dict):
+    scores = None
+    for gold_sentence, pred_sentence in zip(gold_sentences, pred_sentences):
+        gold_label_ids = [label2id[label] for label in gold_sentence.labels]
+        pred_label_ids = [label2id[label] for label in pred_sentence.labels]
+        scores = score_sequence(get_chunks(gold_label_ids, label2id), get_chunks(pred_label_ids, label2id), scores=scores)
+    print("epoch: {}, {}: {}, muc_eval={}".format(epoch, phase, step, json.dumps(scores.to_dict(), indent=1)))
 
 
 def mkdir(folder_path: str):
