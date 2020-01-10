@@ -26,7 +26,6 @@ def run_token_step(device, batch: tuple, x_model: XfmrNerModel, model_optimizer:
 
 
 def decode_token_batch(batch: list, samples: dict, x_model: XfmrNerModel) -> (list, list):
-    # sent_ids, token_idx, token_input_ids, token_attention_mask, token_label_ids, token_mask, token_gold_ids, token_prediction_ids = batch
     sent_ids, _, _, _, _, valid_token_mask, valid_token_gold_ids, valid_token_prediction_ids = batch
     gold_token_labeled_sentences = []
     pred_token_labeled_sentences = []
@@ -36,10 +35,6 @@ def decode_token_batch(batch: list, samples: dict, x_model: XfmrNerModel) -> (li
         sent_attention_mask = valid_token_mask[i]
         sent_gold_ids = valid_token_gold_ids[i][sent_attention_mask == 1]
         sent_pred_ids = valid_token_prediction_ids[i][sent_attention_mask == 1]
-        # sent_token_idx = token_idx[i][sent_attention_mask == 1]
-        # sent_gold_ids = sent_gold_ids[sent_token_idx == 1][1:-1]
-        # sent_pred_ids = sent_pred_ids[sent_token_idx == 1][1:-1]
-        # tokens = data_sample['tokens'][1:-1]
         sent_text = sent_data_sample['text']
         sent_token_offsets = {start_offset: end_offset for start_offset, end_offset in zip(sent_data_sample['token_start_offsets'][1:-1], sent_data_sample['token_end_offsets'][1:-1])}
         sent_gold_labels = [x_model.labels[label_id] for label_id in sent_gold_ids]
@@ -69,7 +64,6 @@ def run_token(epoch, phase, device, data: DataLoader, samples: dict, x_model: Xf
             print('epoch: {}, {}: {}({}) token loss: {}'.format(epoch, phase, step, len(decoded_token_pred), print_token_loss/print_every))
             print_sample(epoch, phase, step, print_token_gold[-1], print_token_pred[-1])
             print_metrics(epoch, phase, step, print_token_gold, print_token_pred, x_model.labels[1:])
-            # print_muc_eval(epoch, phase, step, print_token_gold, print_token_pred, x_model.label2id)
             print_token_loss = 0
             print_token_gold, print_token_pred = [], []
     print('epoch: {}, {}: {}({}) token loss: {}'.format(epoch, phase, 'total', len(decoded_token_pred), total_token_loss/len(data)))

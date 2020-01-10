@@ -6,8 +6,8 @@ from src.modeling.modeling_token_xfmr import XfmrNerModel
 from src.modeling.modeling_char_xfmr import CharXfmrNerModel
 
 
-spmrl_norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
-spmrl_norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'O', 'ANG': 'O', 'DUC': 'ORG', 'WOA': 'O', 'FAC': 'LOC'}
+spmrl_norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'O', 'ANG': 'O', 'DUC': 'O', 'WOA': 'O', 'FAC': 'LOC'}
+spmrl_norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'O', 'ANG': 'O', 'DUC': 'O', 'WOA': 'O', 'FAC': 'LOC'}
 # norm_labels_gpe_org = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'ORG', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
 # norm_labels_gpe_loc = {'PER': 'PER', 'LOC': 'LOC', 'ORG': 'ORG', 'GPE': 'LOC', 'EVE': 'ORG', 'ANG': 'ORG', 'DUC': 'ORG', 'WOA': 'ORG', 'FAC': 'ORG'}
 

@@ -13,7 +13,7 @@ transition_matrix = {
     'B-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'I-ORG', 'O'],
     'I-PER': ['B-PER', 'B-LOC', 'B-ORG', 'I-PER', 'O'],
     'I-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'I-LOC', 'O'],
-    'I-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'I-ORG', 'O'],
+    'I-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'I-ORG', 'O']
 }
 
 

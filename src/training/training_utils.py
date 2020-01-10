@@ -40,17 +40,21 @@ from src.training.score_utils import get_chunks, score_sequence
 
 class ModelOptimizer:
 
-    def __init__(self, optimizer, scheduler, parameters, max_grad_norm):
+    def __init__(self, step_every, optimizer, scheduler, parameters, max_grad_norm):
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.parameters = parameters
         self.max_grad_norm = max_grad_norm
+        self.step_every = step_every
+        self.steps = 0
 
     def step(self):
-        nn.utils.clip_grad_norm_(parameters=self.parameters, max_norm=self.max_grad_norm)
-        self.optimizer.step()
-        self.scheduler.step()
-        self.optimizer.zero_grad()
+        self.steps += 1
+        if self.steps % self.step_every == 0:
+            nn.utils.clip_grad_norm_(parameters=self.parameters, max_norm=self.max_grad_norm)
+            self.optimizer.step()
+            self.scheduler.step()
+            self.optimizer.zero_grad()
 
 
 def print_sample(epoch, phase, step, gold_sent, pred_sent):
@@ -71,8 +75,7 @@ def print_metrics(epoch, phase, step, gold_sentences: list, pred_sentences: list
     y_pred = pd.Series(pred_labels)
     cross_tab = pd.crosstab(y_true, y_pred, rownames=['Real Label'], colnames=['Prediction'], margins=True)
     report = classification_report(y_true, y_pred, labels=labels, target_names=labels)
-    print("epoch: {}, {}: {}, precision={}, recall={}, f1={}, acc={}".format(epoch, phase, step, precision_micro,
-                                                                             recall_micro, f1_micro, accuracy))
+    print("epoch: {}, {}: {}, precision={}, recall={}, f1={}, acc={}".format(epoch, phase, step, precision_micro, recall_micro, f1_micro, accuracy))
     print(cross_tab)
     print(report)
 

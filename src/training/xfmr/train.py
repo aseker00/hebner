@@ -39,7 +39,9 @@ def main():
         ner_model.cuda(device)
     print_every = 1
     epochs = 3
-    lr = 1e-5
+    lr = 1e-3
+    parameters = list(ner_model.classifier.parameters()) + list(ner_model.crf.parameters())
+    # parameters = ner_model.parameters()
     max_grad_norm = 1.0
     train_batch_size = 8
     eval_batch_size = 8
@@ -49,11 +51,9 @@ def main():
         train_samples = load_model_data_samples(train_sample_file_path)
         num_training_steps = len(train_samples) / train_batch_size
         num_warmup_steps = num_training_steps / 10
-        # parameters = list(ner_model.classifier.parameters()) + list(ner_model.crf.parameters())
-        parameters = ner_model.parameters()
         optimizer = AdamW(parameters, lr=lr)
         scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps, num_training_steps=num_training_steps)
-        ner_model_optimizer = ModelOptimizer(optimizer, scheduler, parameters, max_grad_norm)
+        ner_model_optimizer = ModelOptimizer(32/train_batch_size, optimizer, scheduler, parameters, max_grad_norm)
         if ner_model_type == 'char':
             train_dataset, train_samples = to_char_dataset(train_samples)
             train_sampler = RandomSampler(train_dataset)

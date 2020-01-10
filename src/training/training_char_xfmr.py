@@ -29,11 +29,6 @@ def run_char_step(device, batch: tuple, cx_model: CharXfmrNerModel, model_optimi
 
 
 def decode_char_batch(batch: list, samples: dict, cx_model: CharXfmrNerModel) -> (list, list):
-    # (sent_ids, token_idx, token_input_ids, token_attention_mask, char_token_idx, char_input_ids, char_attention_mask,
-    #  char_label_ids, char_prediction_ids) = batch
-    # (sent_ids, token_idx, token_input_ids, token_attention_mask, char_token_idx, char_input_ids, char_attention_mask,
-    #  char_label_ids, char_prediction_ids) = batch
-    # sent_ids, _, _, _, _, char_input_ids, char_attention_mask, char_label_ids, char_prediction_ids = batch
     sent_ids, _, _, _, _, _, _, _, valid_char_mask, valid_char_gold_ids, valid_char_prediction_ids = batch
     gold_char_labeled_sentences = []
     pred_char_labeled_sentences = []
@@ -43,9 +38,6 @@ def decode_char_batch(batch: list, samples: dict, cx_model: CharXfmrNerModel) ->
         sent_attention_mask = valid_char_mask[i]
         sent_gold_ids = valid_char_gold_ids[i][sent_attention_mask == 1]
         sent_pred_ids = valid_char_prediction_ids[i][sent_attention_mask == 1]
-        # sent_token_idx = token_idx[i][sent_attention_mask == 1]
-        # sent_gold_ids = sent_gold_ids[1:-1]
-        # sent_pred_ids = sent_pred_ids[1:-1]
         sent_text = sent_data_sample['text']
         sent_token_offsets = {start_offset: end_offset for start_offset, end_offset in zip(sent_data_sample['token_start_offsets'][1:-1], sent_data_sample['token_end_offsets'][1:-1])}
         sent_gold_labels = [cx_model.labels[label_id] for label_id in sent_gold_ids]
