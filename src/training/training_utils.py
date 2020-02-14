@@ -48,10 +48,13 @@ class ModelOptimizer:
         self.step_every = step_every
         self.steps = 0
 
-    def step(self):
+    def step(self, loss):
         self.steps += 1
+        loss /= self.step_every
+        loss.backward()
         if self.steps % self.step_every == 0:
-            nn.utils.clip_grad_norm_(parameters=self.parameters, max_norm=self.max_grad_norm)
+            if self.max_grad_norm > 0:
+                nn.utils.clip_grad_norm_(parameters=self.parameters, max_norm=self.max_grad_norm)
             self.optimizer.step()
             self.scheduler.step()
             self.optimizer.zero_grad()

@@ -20,8 +20,8 @@ def run_token_step(device, batch: tuple, x_model: XfmrNerModel, model_optimizer:
     batch = tuple(t.to(device) for t in batch)
     loss, valid_token_mask, valid_gold_token_labels, valid_pred_token_labels = x_model(*batch)
     if model_optimizer is not None:
-        loss.backward()
-        model_optimizer.step()
+        # loss.backward()
+        model_optimizer.step(loss)
     return loss, valid_token_mask.cpu(), valid_gold_token_labels.cpu(), valid_pred_token_labels.cpu()
 
 
