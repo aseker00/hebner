@@ -50,6 +50,7 @@ def main():
         optimizer = AdamW(parameters, lr=lr)
         scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps, num_training_steps=num_training_steps)
         ner_model_optimizer = ModelOptimizer(32/train_batch_size, optimizer, scheduler, parameters, max_grad_norm)
+        torch.cuda.empty_cache()
         if ner_model_type == 'char':
             train_dataset, train_samples = to_char_dataset(train_samples)
             train_sampler = RandomSampler(train_dataset)

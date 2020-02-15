@@ -6,7 +6,7 @@ from torch.nn.utils.rnn import pad_sequence
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
 
-labels = ['O', 'B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-PER', 'I-LOC', 'I-ORG', 'I-NAT', 'I-TTL']
+labels = ['O', 'B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-PER', 'I-LOC', 'I-ORG', 'I-TTL']
 # labels = ['O', 'B-PER', 'B-LOC', 'B-ORG', 'I-PER', 'I-LOC', 'I-ORG']
 
 

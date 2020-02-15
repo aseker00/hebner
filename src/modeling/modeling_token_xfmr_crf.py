@@ -6,18 +6,16 @@ from src.modeling.modeling_token_xfmr import XfmrNerModel
 
 
 transition_matrix = {
-    'SOS': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'O'],
-    'O': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'O'],
-    'B-PER': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-PER', 'O'],
-    'B-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-LOC', 'O'],
-    'B-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-ORG', 'O'],
-    'B-NAT': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-NAT', 'O'],
-    'B-TTL': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-TTL', 'O'],
-    'I-PER': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-PER', 'O'],
-    'I-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-LOC', 'O'],
-    'I-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-ORG', 'O'],
-    'I-NAT': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-NAT', 'O'],
-    'I-TTL': ['B-PER', 'B-LOC', 'B-ORG', 'B-NAT', 'B-TTL', 'I-TTL', 'O']
+    'SOS': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'O'],
+    'O': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'O'],
+    'B-PER': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-PER', 'O'],
+    'B-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-LOC', 'O'],
+    'B-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-ORG', 'O'],
+    'B-TTL': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-TTL', 'O'],
+    'I-PER': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-PER', 'O'],
+    'I-LOC': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-LOC', 'O'],
+    'I-ORG': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-ORG', 'O'],
+    'I-TTL': ['B-PER', 'B-LOC', 'B-ORG', 'B-TTL', 'I-TTL', 'O']
 }
 
 

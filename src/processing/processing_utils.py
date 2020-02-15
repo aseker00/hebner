@@ -109,7 +109,7 @@ class TokenLabeledSentence:
         else:
             row_token = self.text[token_offset[0]:token_offset[1]]
             row_label = self.labels[token_idx - 1]
-        row_label_id = x_model.label2id[row_label]
+        row_label_id = x_model.label2id.get(row_label, x_model.label2id['O'])
         row_xfmr_tokens, row_xfmr_token_ids = x_model.tokenize(row_token)
         return {'sent_idx': [self.sent_id] * len(row_xfmr_tokens),
                 'token_idx': [token_idx] * len(row_xfmr_tokens),
